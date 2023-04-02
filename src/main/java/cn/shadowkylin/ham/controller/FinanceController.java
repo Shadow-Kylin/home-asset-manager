@@ -2,7 +2,6 @@ package cn.shadowkylin.ham.controller;
 
 import cn.shadowkylin.ham.common.ResultUtil;
 import cn.shadowkylin.ham.model.Finance;
-import cn.shadowkylin.ham.model.Result;
 import cn.shadowkylin.ham.service.FinanceService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class FinanceController {
      * 获取财务列表
      */
     @GetMapping("/getFinanceList/{userId}")
-    public Result<Object> getFinanceList(@PathVariable("userId") int userId) {
+    public ResultUtil<Object> getFinanceList(@PathVariable("userId") int userId) {
         return ResultUtil.success("获取财务列表成功", financeService.getFinanceList(userId));
     }
 
@@ -32,7 +31,7 @@ public class FinanceController {
      * 获取财务详情
      */
     @GetMapping("/getFinanceDetail/{financeId}")
-    public Result<Object> getFinanceDetail(@PathVariable("financeId") int financeId) {
+    public ResultUtil<Object> getFinanceDetail(@PathVariable("financeId") int financeId) {
         return ResultUtil.success("获取财务详情成功", financeService.getFinanceDetail(financeId));
     }
 
@@ -40,7 +39,7 @@ public class FinanceController {
      * 添加财务
      */
     @PostMapping("/addFinance")
-    public Result<Object> addFinance(@RequestBody Finance finance) {
+    public ResultUtil<Object> addFinance(@RequestBody Finance finance) {
         financeService.addFinance(finance);
         return ResultUtil.success("添加财务成功", null);
     }
@@ -49,7 +48,7 @@ public class FinanceController {
      * 修改财务
      */
     @PostMapping("/updateFinance")
-    public Result<Object> updateFinance(@RequestBody Finance finance) {
+    public ResultUtil<Object> updateFinance(@RequestBody Finance finance) {
         financeService.updateFinance(finance);
         return ResultUtil.success("修改财务成功", null);
     }
@@ -57,7 +56,7 @@ public class FinanceController {
      * 删除财务
      */
     @PostMapping("/deleteFinance/{financeId}")
-    public Result<Object> deleteFinance(@PathVariable("financeId") int financeId) {
+    public ResultUtil<Object> deleteFinance(@PathVariable("financeId") int financeId) {
         financeService.deleteFinance(financeId);
         return ResultUtil.success("删除财务成功", null);
     }
@@ -65,7 +64,7 @@ public class FinanceController {
      * 批量删除财务
      */
     @PostMapping("/deleteFinanceList")
-    public Result<Object> deleteFinanceList(@RequestBody int[] financeIdList) {
+    public ResultUtil<Object> deleteFinanceList(@RequestBody int[] financeIdList) {
         financeService.deleteFinanceList(financeIdList);
         return ResultUtil.success("批量删除财务成功", null);
     }

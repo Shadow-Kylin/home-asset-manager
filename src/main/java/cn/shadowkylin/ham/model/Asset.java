@@ -14,7 +14,7 @@ public class Asset {
     private String name;
     private Date purchaseDate;
     private Double purchasePrice;
-    private Double currentPrice;
+    private Double currentValue;
     private String notes;
 
     public Integer getId() {
@@ -65,12 +65,12 @@ public class Asset {
         this.purchasePrice = purchasePrice;
     }
 
-    public Double getCurrentPrice() {
-        return currentPrice;
+    public Double getCurrentValue() {
+        return currentValue;
     }
 
-    public void setCurrentPrice(Double currentPrice) {
-        this.currentPrice = currentPrice;
+    public void setCurrentValue(Double currentValue) {
+        this.currentValue = currentValue;
     }
 
     public String getNotes() {

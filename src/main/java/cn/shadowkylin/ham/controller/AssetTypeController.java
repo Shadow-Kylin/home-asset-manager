@@ -2,7 +2,6 @@ package cn.shadowkylin.ham.controller;
 
 import cn.shadowkylin.ham.common.ResultUtil;
 import cn.shadowkylin.ham.model.AssetType;
-import cn.shadowkylin.ham.model.Result;
 import cn.shadowkylin.ham.service.AssetTypeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +28,7 @@ public class AssetTypeController {
      * postMapping：修改数据，会产生副作用
      */
     @GetMapping("/getAssetTypeList")
-    public Result<Object> getAssetTypeList(){
+    public ResultUtil<Object> getAssetTypeList(){
         //调用service层的方法，获取资产类型列表
         List<String> assetTypeList = assetTypeService.getAssetTypeList();
         return ResultUtil.success("获取资产类型列表成功",assetTypeList);
@@ -39,7 +38,7 @@ public class AssetTypeController {
      * 添加资产类型
      */
     @PostMapping("/addAssetType")
-    public Result<Object> addAssetType(@RequestBody AssetType assetType){
+    public ResultUtil<Object> addAssetType(@RequestBody AssetType assetType){
         assetTypeService.addAssetType(assetType.getName());
         return ResultUtil.success("添加成功！",null);
     }
@@ -48,7 +47,7 @@ public class AssetTypeController {
      * 修改资产类型
      */
     @PostMapping("/updateAssetType")
-    public Result<Object> updateAssetType(@RequestBody AssetType assetType){
+    public ResultUtil<Object> updateAssetType(@RequestBody AssetType assetType){
         assetTypeService.updateAssetType(assetType.getId(),assetType.getName());
         return ResultUtil.success("修改成功！",null);
     }
@@ -57,7 +56,7 @@ public class AssetTypeController {
      * 删除资产类型
      */
     @PostMapping("/deleteAssetType")
-    public Result<Object> deleteAssetType(@RequestBody AssetType assetType){
+    public ResultUtil<Object> deleteAssetType(@RequestBody AssetType assetType){
         assetTypeService.deleteAssetType(assetType.getId());
         return ResultUtil.success("删除成功！",null);
     }

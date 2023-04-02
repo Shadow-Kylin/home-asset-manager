@@ -12,7 +12,8 @@
         WHERE id = #{finance_id}
     </select>
     <insert id="addFinance">
-        INSERT INTO VALUES (#{asset_type_id}, #{user_id}, #{date}, #{type}, #{amount}, #{notes})
+        INSERT INTO finance (user_id, date, type, amount, notes)
+        VALUES (#{user_id}, #{date}, #{type}, #{amount}, #{notes})
     </insert>
     <update id="updateFinance">
         UPDATE finance

@@ -1,7 +1,6 @@
 package cn.shadowkylin.ham.controller;
 
 import cn.shadowkylin.ham.common.*;
-import cn.shadowkylin.ham.model.Result;
 import cn.shadowkylin.ham.model.User;
 import cn.shadowkylin.ham.service.AuthService;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,7 @@ public class AuthController {
      * 登录
      */
     @PostMapping("/login")
-    public Result<Object> login(@RequestBody User user) {
+    public ResultUtil<Object> login(@RequestBody User user) {
         if (user == null) {
             return ResultUtil.error("参数错误！");
         }
@@ -47,14 +46,14 @@ public class AuthController {
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         map.put("user", user1);
-        return ResultUtil.success("登录成功！",map);
+        return ResultUtil.success( "登录成功！",map);
     }
 
     /**
      * 注册
      */
     @PostMapping("/register")
-    public Result<Object> register(@RequestBody User user,@RequestParam("code") String code) {
+    public ResultUtil<Object> register(@RequestBody User user,@RequestParam("code") String code) {
         if (user == null || user.getPhone() == null || user.getPassword() == null) {
             return ResultUtil.error("参数错误！");
         }
@@ -72,14 +71,14 @@ public class AuthController {
         }
         //注册
         //authService.register(user);
-        return ResultUtil.success(null, "注册成功！");
+        return ResultUtil.success("注册成功！");
     }
 
     /**
      * 登出
      */
     @PostMapping("/logout")
-    public Result<Object> logout(@RequestHeader("Authorization") String token) {
+    public ResultUtil<Object> logout(@RequestHeader("Authorization") String token) {
         int userId =jwtTokenUtil.getUserIdFromToken(token);
         redisUtil.del("token-" + userId);
         return ResultUtil.success("登出成功！");
@@ -89,20 +88,20 @@ public class AuthController {
      * 修改密码
      */
     @PostMapping("/updatePassword")
-    public Result<Object> updatePassword(@RequestBody User user) {
+    public ResultUtil<Object> updatePassword(@RequestBody User user) {
         if (user == null || user.getPhone() == null || user.getPassword() == null) {
             return ResultUtil.error("参数错误！");
         }
         //修改密码
         authService.updatePassword(user);
-        return ResultUtil.success(null, "修改密码成功！");
+        return ResultUtil.success( "修改密码成功！");
     }
 
     /**
      * 发送短信验证码
      */
     @PostMapping("/sendSMS")
-    public Result<Object> sendSms(@RequestBody User user) {
+    public ResultUtil<Object> sendSms(@RequestBody User user) {
         if (user == null || user.getPhone() == null) {
             return ResultUtil.error("参数错误！");
         }
@@ -114,24 +113,24 @@ public class AuthController {
         String code = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
         System.out.println(code);
         //发送短信验证码
-        //String result = ALYSmsUtil.sendSms(user.getPhone(), code);
+        //String ResultUtil = ALYSmsUtil.sendSms(user.getPhone(), code);
 
         //序列化，使用容联云时使用
         //Gson gson = new Gson();
-        //Map<String, Object> map = gson.fromJson(result, Map.class);
+        //Map<String, Object> map = gson.fromJson(ResultUtil, Map.class);
         //System.out.println(map.get("statusMsg"));
-        //return ResultUtil.success(null, result);
+        //return ResultUtil.success(null, ResultUtil);
 
-        //if(result.equals("OK")){
+        //if(ResultUtil.equals("OK")){
         //    //将验证码存入redis
         //    redisUtil.set("code-" + user.getPhone(), code, 60 * 5);
         //    return ResultUtil.success(null, "发送成功！");
         //}
         //else
-        //    return ResultUtil.error(result);
+        //    return ResultUtil.error(ResultUtil);
 
         //测试用下面语句，发送次数有限
         redisUtil.set("code-" + user.getPhone(), code, 60 * 5);
-        return ResultUtil.success(null, "发送成功！");
+        return ResultUtil.success( "发送成功！");
     }
 }

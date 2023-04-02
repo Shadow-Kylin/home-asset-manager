@@ -11,9 +11,9 @@
         FROM asset
         WHERE id = #{asset_id}
     </select>
-    <insert id="addAsset">
-        INSERT INTO asset
-        VALUES (#{asset_type_id}, #{user_id}, #{name}, #{purchase_date}, #{purchase_price}, #{current_value},
+    <insert id="addAsset" parameterType="Asset">
+        INSERT INTO asset (asset_type_id,user_id, name, purchase_date, purchase_price, current_value, notes)
+        VALUES (#{assetTypeId},#{userId}, #{name}, #{purchaseDate}, #{purchasePrice}, #{currentValue},
                 #{notes})
     </insert>
     <update id="updateAsset">

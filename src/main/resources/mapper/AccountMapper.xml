@@ -11,8 +11,8 @@
         WHERE id = #{id}
     </select>
     <insert id="addAccount">
-        INSERT INTO account
-        VALUES (#{id}, #{username}, #{password}, #{phone}, #{createdTime})
+        INSERT INTO account (username, password, phone, created_time)
+        VALUES ( #{username}, #{password}, #{phone}, #{createdTime})
     </insert>
     <update id="updateAccount">
         UPDATE account
