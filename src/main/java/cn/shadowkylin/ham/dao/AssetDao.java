@@ -3,6 +3,8 @@ package cn.shadowkylin.ham.dao;
 import cn.shadowkylin.ham.model.Asset;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @创建人 li cong
  * @创建时间 2023/4/2
@@ -13,11 +15,11 @@ public interface AssetDao {
     /**
      * 获取资产列表
      */
-    Object getAssetList(int userId);
+    List<Asset> getAssetList(int userId);
     /**
      * 获取资产详情
      */
-    Object getAssetDetail(int assetId);
+    Asset getAssetDetail(int assetId);
     /**
      * 添加资产
      */

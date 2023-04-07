@@ -4,6 +4,10 @@
     <select id="getAssetTypeList" resultType="AssetType">
         SELECT * FROM asset_type
     </select>
+    <select id="getAssetTypeDetail" resultType="AssetType">
+        SELECT * FROM asset_type
+        WHERE id = #{id}
+    </select>
     <insert id="addAssetType">
         INSERT INTO asset_type (name)
         VALUES (#{name})

@@ -1,6 +1,7 @@
 package cn.shadowkylin.ham.service;
 
 import cn.shadowkylin.ham.dao.AssetTypeDao;
+import cn.shadowkylin.ham.model.AssetType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,14 @@ public class AssetTypeService {
     /**
      * 获取资产类型列表
      */
-    public List<String> getAssetTypeList(){
+    public List<AssetType> getAssetTypeList(){
         return assetTypeDao.getAssetTypeList();
+    }
+    /**
+     * 获取资产类型详情
+     */
+    public AssetType getAssetTypeDetail(int id) {
+        return assetTypeDao.getAssetTypeDetail(id);
     }
     /**
      * 增加资产类型

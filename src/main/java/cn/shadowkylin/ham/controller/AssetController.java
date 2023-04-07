@@ -3,9 +3,12 @@ package cn.shadowkylin.ham.controller;
 import cn.shadowkylin.ham.common.ResultUtil;
 import cn.shadowkylin.ham.model.Asset;
 import cn.shadowkylin.ham.service.AssetService;
+import cn.shadowkylin.ham.service.AssetTypeService;
+import com.github.pagehelper.PageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @创建人 li cong
@@ -19,12 +22,28 @@ public class AssetController {
     @Resource
     private AssetService assetService;
 
+    @Resource
+    private AssetTypeService assetTypeService;
+
     /**
      * 获取资产列表
+     * PathVariable：获取url中的路径参数 例如/getAssetList/userId
+     * RequestParam：获取url中的查询参数 例如/getAssetList?userId=1
      */
     @GetMapping("/getAssetList/{userId}")
-    public ResultUtil<Object> getAssetList(@PathVariable("userId") int userId) {
-        return ResultUtil.success("获取资产列表成功", assetService.getAssetList(userId));
+    public ResultUtil<Object> getAssetList(
+            @PathVariable("userId") int userId,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        //使用PageHelper分页
+        PageHelper.startPage(pageNum, pageSize);
+        //获取资产列表
+        List<Asset> assetList = assetService.getAssetList(userId);
+        //将Asset的asset_type_id转换为asset_type_name
+        for (Asset asset : assetList) {
+            asset.setAssetTypeName(assetTypeService.getAssetTypeDetail(asset.getAssetTypeId()).getName());
+        }
+        return ResultUtil.success("获取资产列表成功", assetList);
     }
 
     /**

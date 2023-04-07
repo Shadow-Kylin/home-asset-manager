@@ -31,17 +31,21 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
+            if (jwtTokenUtil.isTokenExpired(token)) {
+                responseJson(response, ResultUtil.error("登录超时，请重新登录！", null, HttpStatus.LOGIN_EXPIRE));
+                return false;
+            }
             int userId = jwtTokenUtil.getUserIdFromToken(token);
             Object redis_token = redisUtil.get("token-" + userId);
-            if (jwtTokenUtil.isTokenExpired(token) || redis_token == null || !token.equals(redis_token.toString())) {
-                responseJson(response, ResultUtil.error("登录超时，请重新登录！", HttpStatus.LOGIN_EXPIRE));
+            if (redis_token == null || !token.equals(redis_token.toString())) {
+                responseJson(response, ResultUtil.error("登录超时，请重新登录！", null, HttpStatus.LOGIN_EXPIRE));
                 return false;
-            } else {
-                redisUtil.expire("token-" + userId, 30 * 60);
-                return true;
             }
-        } else {
-            responseJson(response, ResultUtil.error("未登录，请登录！", HttpStatus.NOT_LOGIN));
+            redisUtil.expire("token-" + userId, 30 * 60);
+            return true;
+        }
+        else {
+            responseJson(response, ResultUtil.error("未登录，请登录！", null, HttpStatus.NOT_LOGIN));
             return false;
         }
     }

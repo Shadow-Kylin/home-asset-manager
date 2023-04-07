@@ -1,11 +1,11 @@
 package cn.shadowkylin.ham.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public final class RedisUtil {
 
-    @Resource
-    //RedisTemplate是springboot提供的Redis操作类，封装了Redis的所有操作
+    @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     /**

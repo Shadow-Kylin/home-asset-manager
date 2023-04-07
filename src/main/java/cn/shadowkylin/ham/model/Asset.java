@@ -1,6 +1,6 @@
 package cn.shadowkylin.ham.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @创建人 li cong
@@ -10,12 +10,21 @@ import java.util.Date;
 public class Asset {
     private Integer id;
     private Integer assetTypeId;
+    private String assetTypeName;
     private Integer userId;
     private String name;
     private Date purchaseDate;
     private Double purchasePrice;
     private Double currentValue;
     private String notes;
+
+    public String getAssetTypeName() {
+        return assetTypeName;
+    }
+
+    public void setAssetTypeName(String assetTypeName) {
+        this.assetTypeName = assetTypeName;
+    }
 
     public Integer getId() {
         return id;

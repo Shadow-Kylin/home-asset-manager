@@ -30,7 +30,7 @@ public class AssetTypeController {
     @GetMapping("/getAssetTypeList")
     public ResultUtil<Object> getAssetTypeList(){
         //调用service层的方法，获取资产类型列表
-        List<String> assetTypeList = assetTypeService.getAssetTypeList();
+        List<AssetType> assetTypeList = assetTypeService.getAssetTypeList();
         return ResultUtil.success("获取资产类型列表成功",assetTypeList);
     }
 

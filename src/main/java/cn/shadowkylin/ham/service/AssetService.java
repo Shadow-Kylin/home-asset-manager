@@ -5,6 +5,7 @@ import cn.shadowkylin.ham.model.Asset;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @创建人 li cong
@@ -19,13 +20,13 @@ public class AssetService {
     /**
      * 获取资产列表
      */
-    public Object getAssetList(int userId) {
+    public List<Asset> getAssetList(int userId) {
         return assetDao.getAssetList(userId);
     }
     /**
      * 获取资产详情
      */
-    public Object getAssetDetail(int assetId) {
+    public Asset getAssetDetail(int assetId) {
         return assetDao.getAssetDetail(assetId);
     }
     /**

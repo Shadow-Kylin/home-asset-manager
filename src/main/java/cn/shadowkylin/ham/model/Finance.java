@@ -1,6 +1,6 @@
 package cn.shadowkylin.ham.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @创建人 li cong

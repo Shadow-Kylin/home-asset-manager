@@ -27,6 +27,6 @@ public class WebConfig implements WebMvcConfigurer {
         //注册拦截器
         InterceptorRegistration registration = registry.addInterceptor(tokenInterceptor);
         //拦截路径
-        registration.addPathPatterns("/**").excludePathPatterns("/auth/login","/auth/register","/auth/sendSMS");
+        registration.addPathPatterns("/**").excludePathPatterns("/auth/login","/auth/register","/auth/sendSms");
     }
 }
