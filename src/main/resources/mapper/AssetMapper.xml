@@ -5,6 +5,33 @@
         SELECT *
         FROM asset
         WHERE user_id = #{userId}
+        <if test="searchType == 'name'">
+            AND name LIKE CONCAT('%',#{searchValue},'%')
+        </if>
+        <if test="searchType == 'assetType'">
+            AND asset_type_id in
+            <foreach collection="searchValue.split(',')" item="assetType" open="(" separator="," close=")">
+                #{assetType}
+            </foreach>
+        </if>
+        <if test="searchType == 'purchaseDate'">
+            AND purchase_date = #{searchValue}
+        </if>
+        <if test="searchType == 'purchasePrice'">
+            AND purchase_price = #{searchValue}
+        </if>
+        <if test="searchType == 'currentValue'">
+            AND current_value = #{searchValue}
+        </if>
+        <if test="searchType == 'notes'">
+            AND notes LIKE CONCAT('%',#{searchValue},'%')
+        </if>
+    </select>
+    <select id="getAssetBySerialNumber" resultType="Asset">
+        SELECT *
+        FROM asset
+        WHERE user_id = #{userId}
+        AND asset_serial_number = #{assetSerialNumber}
     </select>
     <select id="getAssetDetail" resultType="Asset">
         SELECT *
@@ -12,18 +39,27 @@
         WHERE id = #{asset_id}
     </select>
     <insert id="addAsset" parameterType="Asset">
-        INSERT INTO asset (asset_type_id,user_id, name, purchase_date, purchase_price, current_value, notes)
-        VALUES (#{assetTypeId},#{userId}, #{name}, #{purchaseDate}, #{purchasePrice}, #{currentValue},
+        INSERT INTO asset (asset_type_id,user_id,asset_serial_number, name, purchase_date, purchase_price, current_value, notes)
+        VALUES (#{assetTypeId},#{userId},#{assetSerialNumber}, #{name}, #{purchaseDate}, #{purchasePrice}, #{currentValue},
                 #{notes})
+    </insert>
+    <insert id="addAssetList" parameterType="List">
+        INSERT INTO asset (asset_type_id,user_id,asset_serial_number, name, purchase_date, purchase_price,
+        current_value, notes)
+        VALUES
+        <foreach collection="assetList" item="asset" separator=",">
+            (#{asset.assetTypeId},#{asset.userId},#{asset.assetSerialNumber}, #{asset.name}, #{asset.purchaseDate},
+            #{asset.purchasePrice}, #{asset.currentValue},#{asset.notes})
+        </foreach>
     </insert>
     <update id="updateAsset">
         UPDATE asset
-        SET asset_type_id  = #{asset_type_id},
-            user_id        = #{user_id},
+        SET asset_type_id  = #{assetTypeId},
+            user_id        = #{userId},
             name           = #{name},
-            purchase_date  = #{purchase_date},
-            purchase_price = #{purchase_price},
-            current_value  = #{current_value},
+            purchase_date  = #{purchaseDate},
+            purchase_price = #{purchasePrice},
+            current_value  = #{currentValue},
             notes          = #{notes}
         WHERE id = #{id}
     </update>
@@ -36,7 +72,7 @@
         DELETE
         FROM asset
         WHERE id IN
-        <foreach collection="idList" item="id" open="(" separator="," close=")">
+        <foreach collection="assetIdList" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>

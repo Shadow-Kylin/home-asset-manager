@@ -19,4 +19,6 @@ public class HttpStatus {
     public static final int PHONE_OR_PASSWORD_ERROR = 1006;
     // 手机号不存在
     public static final int PHONE_NOT_EXIST = 1007;
+    // 资产序列号不存在
+    public static final int ASSET_SERIAL_NUMBER_NOT_EXIST = 1008;
 }

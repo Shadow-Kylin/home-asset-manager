@@ -21,4 +21,8 @@
         DELETE FROM asset_type
         WHERE id = #{id}
     </delete>
+    <select id="getAssetTypeId" resultType="int">
+        SELECT id FROM asset_type
+        WHERE name = #{name}
+    </select>
 </mapper>

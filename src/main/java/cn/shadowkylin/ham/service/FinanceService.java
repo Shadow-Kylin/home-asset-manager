@@ -5,6 +5,7 @@ import cn.shadowkylin.ham.model.Finance;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @创建人 li cong
@@ -18,13 +19,13 @@ public class FinanceService {
     /**
      * 获取财务列表
      */
-    public Object getFinanceList(int userId) {
-        return financeDao.getFinanceList(userId);
+    public List<Finance> getFinanceList(int userId, String searchType, String searchValue, String type) {
+        return financeDao.getFinanceList(userId, searchType, searchValue, type);
     }
     /**
      * 获取财务详情
      */
-    public Object getFinanceDetail(int financeId) {
+    public Finance getFinanceDetail(int financeId) {
         return financeDao.getFinanceDetail(financeId);
     }
     /**
@@ -32,6 +33,12 @@ public class FinanceService {
      */
     public void addFinance(Finance finance) {
         financeDao.addFinance(finance);
+    }
+    /**
+     * 批量添加财务
+     */
+    public void addFinanceList(List<Finance> financeList) {
+        financeDao.addFinanceList(financeList);
     }
     /**
      * 修改财务
@@ -50,5 +57,29 @@ public class FinanceService {
      */
     public void deleteFinanceList(int[] financeIdList) {
         financeDao.deleteFinanceList(financeIdList);
+    }
+    /**
+     * 获取指定年份的财务收入列表
+     */
+    public double[] getIncomeByYear(int userId, int year) {
+        List<Finance> financeList = financeDao.getIncomeByYear(userId, year);
+        double[] incomeList = new double[12];
+        //统计每个月的收入之和
+        for (Finance finance : financeList) {
+            incomeList[finance.getDate().getMonth()] += finance.getAmount();
+        }
+        return incomeList;
+    }
+    /**
+     * 获取指定年份的财务支出列表
+     */
+    public double[] getExpenditureByYear(int userId, int year) {
+        List<Finance> financeList = financeDao.getExpenditureByYear(userId, year);
+        double[] expenditureList = new double[12];
+        //统计每个月的支出之和
+        for (Finance finance : financeList) {
+            expenditureList[finance.getDate().getMonth()] += finance.getAmount();
+        }
+        return expenditureList;
     }
 }

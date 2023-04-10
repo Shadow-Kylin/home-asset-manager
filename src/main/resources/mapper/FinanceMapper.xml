@@ -1,28 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.shadowkylin.ham.dao.FinanceDao">
-    <select id="getFinanceList" resultType="List">
+    <select id="getFinanceList" resultType="Finance">
         SELECT *
         FROM finance
-        where user_id = #{user_id}
+        where user_id = #{userId}
+        <if test="searchType == 'name'">
+            AND name LIKE CONCAT('%',#{searchValue},'%')
+        </if>
+        <if test="searchType == 'assetSerialNumber'">
+            AND asset_serial_number LIKE CONCAT('%',#{searchValue},'%')
+        </if>
+        <if test="searchType == 'date'">
+            AND date = #{searchValue}
+        </if>
+        <if test="searchType == 'amount'">
+            AND amount = #{searchValue}
+        </if>
+        <if test="searchType == 'notes'">
+            AND notes LIKE CONCAT('%',#{searchValue},'%')
+        </if>
+        <if test="type=='income'">
+            AND type = 1
+        </if>
+        <if test="type=='expenditure'">
+            AND type = 0
+        </if>
     </select>
     <select id="getFinanceDetail" resultType="Finance">
         SELECT *
         FROM finance
-        WHERE id = #{finance_id}
+        WHERE id = #{financeId}
     </select>
     <insert id="addFinance">
-        INSERT INTO finance (user_id, date, type, amount, notes)
-        VALUES (#{user_id}, #{date}, #{type}, #{amount}, #{notes})
+        INSERT INTO finance (user_id, name, asset_serial_number, date, type, amount, notes)
+        VALUES (#{userId}, #{name}, #{assetSerialNumber}, #{date}, #{type}, #{amount}, #{notes})
+    </insert>
+    <insert id="addFinanceList">
+        INSERT INTO finance (user_id, name, asset_serial_number, date, type, amount, notes)
+        VALUES
+        <foreach collection="financeList" item="finance" separator=",">
+            (#{finance.userId}, #{finance.name}, #{finance.assetSerialNumber}, #{finance.date}, #{finance.type},
+            #{finance.amount}, #{finance.notes})
+        </foreach>
     </insert>
     <update id="updateFinance">
         UPDATE finance
-        SET asset_type_id = #{asset_type_id},
-            user_id       = #{user_id},
-            date          = #{date},
-            type          = #{type},
-            amount        = #{amount},
-            notes         = #{notes}
+        SET user_id             = #{userId},
+            name                = #{name},
+            asset_serial_number = #{assetSerialNumber},
+            date                = #{date},
+            type                = #{type},
+            amount              = #{amount},
+            notes               = #{notes}
         WHERE id = #{id}
     </update>
     <delete id="deleteFinance">
@@ -34,8 +64,24 @@
         DELETE
         FROM finance
         WHERE id IN
-        <foreach collection="idList" item="id" open="(" separator="," close=")">
+        <foreach collection="financeIdList" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+    <!--获取指定年份的收入记录-->
+    <select id="getIncomeByYear" resultType="Finance">
+        SELECT *
+        FROM finance
+        WHERE user_id = #{userId}
+        AND type = 1
+        AND date LIKE CONCAT(#{year},'%')
+    </select>
+    <!--获取指定年份的支出记录-->
+    <select id="getExpenditureByYear" resultType="Finance">
+        SELECT *
+        FROM finance
+        WHERE user_id = #{userId}
+        AND type = 0
+        AND date LIKE CONCAT(#{year},'%')
+    </select>
 </mapper>

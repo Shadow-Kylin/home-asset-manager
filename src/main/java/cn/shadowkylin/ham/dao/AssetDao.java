@@ -15,7 +15,7 @@ public interface AssetDao {
     /**
      * 获取资产列表
      */
-    List<Asset> getAssetList(int userId);
+    List<Asset> getAssetList(int userId, String searchType, String searchValue);
     /**
      * 获取资产详情
      */
@@ -24,6 +24,10 @@ public interface AssetDao {
      * 添加资产
      */
     void addAsset(Asset asset);
+    /**
+     * 批量添加资产
+     */
+    void addAssetList(List<Asset> assetList);
     /**
      * 修改资产
      */
@@ -36,4 +40,8 @@ public interface AssetDao {
      * 批量删除资产
      */
     void deleteAssetList(int[] assetIdList);
+    /**
+     * 根据序列号获取资产
+     */
+    Asset getAssetBySerialNumber(int userId,String assetSerialNumber);
 }

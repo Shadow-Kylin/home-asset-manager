@@ -9,12 +9,31 @@ import java.sql.Date;
  */
 public class Finance {
     private Integer id;
-    private Integer assetTypeId;
+    //资产序列号
+    private String assetSerialNumber;
+    //财务名称
+    private String name;
     private Integer userId;
     private Date date;
-    private String type;
+    private byte type;
     private Double amount;
     private String notes;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAssetSerialNumber() {
+        return assetSerialNumber;
+    }
+
+    public void setAssetSerialNumber(String assetSerialNumber) {
+        this.assetSerialNumber = assetSerialNumber;
+    }
 
     public Integer getId() {
         return id;
@@ -22,14 +41,6 @@ public class Finance {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getAssetTypeId() {
-        return assetTypeId;
-    }
-
-    public void setAssetTypeId(Integer assetTypeId) {
-        this.assetTypeId = assetTypeId;
     }
 
     public Integer getUserId() {
@@ -48,11 +59,11 @@ public class Finance {
         this.date = date;
     }
 
-    public String getType() {
+    public byte getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(byte type) {
         this.type = type;
     }
 

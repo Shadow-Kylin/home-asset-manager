@@ -47,4 +47,8 @@ public class AssetTypeService {
     public int deleteAssetType(int id) {
         return assetTypeDao.deleteAssetType(id);
     }
+
+    public int getAssetTypeId(String name) {
+        return assetTypeDao.getAssetTypeId(name);
+    }
 }

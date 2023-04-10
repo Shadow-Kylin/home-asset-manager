@@ -11,12 +11,22 @@ public class Asset {
     private Integer id;
     private Integer assetTypeId;
     private String assetTypeName;
+    //资产序列号
+    private String assetSerialNumber;
     private Integer userId;
     private String name;
     private Date purchaseDate;
     private Double purchasePrice;
     private Double currentValue;
     private String notes;
+
+    public String getAssetSerialNumber() {
+        return assetSerialNumber;
+    }
+
+    public void setAssetSerialNumber(String assetSerialNumber) {
+        this.assetSerialNumber = assetSerialNumber;
+    }
 
     public String getAssetTypeName() {
         return assetTypeName;

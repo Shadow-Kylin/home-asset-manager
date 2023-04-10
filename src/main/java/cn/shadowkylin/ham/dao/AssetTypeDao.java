@@ -34,4 +34,11 @@ public interface AssetTypeDao {
      * 删除资产类型
      */
     int deleteAssetType(int id);
+
+    /**
+     * 根据名称获取资产类型id
+     * @param name
+     * @return
+     */
+    int getAssetTypeId(String name);
 }
