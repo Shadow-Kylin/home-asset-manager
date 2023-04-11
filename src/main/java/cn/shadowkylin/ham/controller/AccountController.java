@@ -102,6 +102,21 @@ public class AccountController {
     }
 
     /**
+     * 创建家庭
+     */
+    @PostMapping("/createHome/{requestId}")
+    public ResultUtil<Object> createHome(@PathVariable("requestId") int requestId, String homeName) {
+        //获取请求者的家庭序列号，判断该序列号是否为空，若不为空，则已经创建过家庭，无法再次创建
+        String homeSerialNumber = homeService.getHSNByUserId(requestId);
+        if (homeSerialNumber != null) {
+            return ResultUtil.error("您已创建过家庭，无法再次创建！");
+        }
+        //调用service层的方法，创建家庭
+        homeService.createHome(requestId, homeName);
+        return ResultUtil.success("创建家庭成功！");
+    }
+
+    /**
      * 将用户从家庭中移除
      */
     @PostMapping("/removeUserFromHome/{requestId}")
@@ -153,5 +168,35 @@ public class AccountController {
         //调用service层的方法，解散家庭
         accountService.disbandHome(homeSerialNumber);
         return ResultUtil.success("解散成功！");
+    }
+
+    /**
+     * 通过家庭序列号获取家庭成员列表
+     * @param homeSerialNumber
+     */
+    @GetMapping("/getHomeMembersByHSN/{homeSerialNumber}")
+    public ResultUtil<Object> getHomeMembersByHSN(@PathVariable("homeSerialNumber") String homeSerialNumber) {
+        //查看home表中是否存在该家庭序列号
+        if (!homeService.isHomeExist(homeSerialNumber)) {
+            return ResultUtil.error("该家庭序列号不存在！");
+        }
+        //调用service层的方法，获取家庭成员列表
+        List<User> homeMembers = accountService.getHomeMembersByHSN(homeSerialNumber);
+        return ResultUtil.success("获取家庭成员列表成功", homeMembers);
+    }
+
+    /**
+     * 退出家庭
+     */
+    @PostMapping("/quitHome/{userId}")
+    public ResultUtil<Object> quitHome(@PathVariable("userId") int userId) {
+        //获取用户的家庭序列号，判断用户是否已经加入家庭
+        String homeSerialNumber = homeService.getHSNByUserId(userId);
+        if (homeSerialNumber == null) {
+            return ResultUtil.error("您还未加入家庭！");
+        }
+        //调用service层的方法，退出家庭
+        accountService.quitHome(userId);
+        return ResultUtil.success("退出成功！");
     }
 }
