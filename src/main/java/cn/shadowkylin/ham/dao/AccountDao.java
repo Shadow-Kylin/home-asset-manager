@@ -35,5 +35,7 @@ public interface AccountDao {
     /**
      * 批量删除账户
      */
-    void deleteAccountList(List<Integer> idList);
+    void deleteAccountList(int[] idList);
+
+    List<User> getAccountsByHSN(String homeSerialNumber);
 }

@@ -59,7 +59,7 @@ public class FinanceController {
     @PostMapping("/addFinance")
     public ResultUtil<Object> addFinance(@RequestBody Finance finance) {
         //查询关联资产序列号assetSerialNumber是否存在
-        if(assetService.getAssetBySerialNumber(finance.getUserId(),finance.getAssetSerialNumber()) == null)
+        if(assetService.getAssetByASN(finance.getUserId(),finance.getAssetSerialNumber()) == null)
             return ResultUtil.error("关联资产序列号不存在", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
         financeService.addFinance(finance);
         return ResultUtil.success("添加财务成功", null);
@@ -80,7 +80,7 @@ public class FinanceController {
     @PostMapping("/updateFinance")
     public ResultUtil<Object> updateFinance(@RequestBody Finance finance) {
         //查询关联资产序列号assetSerialNumber是否存在
-        if(assetService.getAssetBySerialNumber(finance.getUserId(),finance.getAssetSerialNumber()) == null)
+        if(assetService.getAssetByASN(finance.getUserId(),finance.getAssetSerialNumber()) == null)
             return ResultUtil.error("关联资产序列号不存在", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
 
         financeService.updateFinance(finance);

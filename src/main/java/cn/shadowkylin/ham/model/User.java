@@ -8,11 +8,36 @@ import java.sql.Date;
  * @描述
  */
 public class User {
+    //用户ID
     private Integer id;
+    //用户名
     private String username;
+    //密码
     private String password;
+    //手机号
     private String phone;
+    //创建时间
     private Date createdTime;
+    //签名
+    private String signature;
+    //所属家庭序列号
+    private String homeSerialNumber;
+
+    public String getHomeSerialNumber() {
+        return homeSerialNumber;
+    }
+
+    public void setHomeSerialNumber(String homeSerialNumber) {
+        this.homeSerialNumber = homeSerialNumber;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
 
     public Date getCreatedTime() {
         return createdTime;

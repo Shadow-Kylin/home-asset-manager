@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 public class NoticeController {
     @Resource
     private NoticeService noticeService;
+
     /**
      * 获取公告
      */

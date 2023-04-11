@@ -4,7 +4,13 @@
     <select id="getAssetList" resultType="Asset">
         SELECT *
         FROM asset
-        WHERE user_id = #{userId}
+        WHERE
+        <if test="StringUtils.isEmpty(homeSerialNumber)">
+            user_id = #{userId}
+        </if>
+        <if test="!StringUtils.isEmpty(homeSerialNumber)">
+            home_serial_number = #{homeSerialNumber}
+        </if>
         <if test="searchType == 'name'">
             AND name LIKE CONCAT('%',#{searchValue},'%')
         </if>
@@ -27,11 +33,34 @@
             AND notes LIKE CONCAT('%',#{searchValue},'%')
         </if>
     </select>
-    <select id="getAssetBySerialNumber" resultType="Asset">
+    <select id="getAssetByASN" resultType="Asset">
         SELECT *
         FROM asset
         WHERE user_id = #{userId}
         AND asset_serial_number = #{assetSerialNumber}
+    </select>
+    <select id="getFixedAsset" resultType="Asset">
+        SELECT *
+        FROM asset
+        WHERE
+        asset_type_id in (1,2,3,4,5);
+        <if test="StringUtils.isEmpty(homeSerialNumber)">
+            user_id = #{userId}
+        </if>
+        <if test="!StringUtils.isEmpty(homeSerialNumber)">
+            home_serial_number = #{homeSerialNumber}
+        </if>
+    </select>
+    <select id="getFluidAsset" resultType="Asset">
+        SELECT *
+        FROM asset
+        WHERE
+        <if test="StringUtils.isEmpty(homeSerialNumber)">
+            user_id = #{userId}
+        </if>
+        <if test="!StringUtils.isEmpty(homeSerialNumber)">
+            home_serial_number = #{homeSerialNumber}
+        </if>
     </select>
     <select id="getAssetDetail" resultType="Asset">
         SELECT *

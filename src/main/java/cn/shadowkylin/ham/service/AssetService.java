@@ -20,8 +20,8 @@ public class AssetService {
     /**
      * 获取资产列表
      */
-    public List<Asset> getAssetList(int userId, String searchType, String searchValue) {
-        return assetDao.getAssetList(userId,searchType,searchValue);
+    public List<Asset> getAssetList(int userId,String homeSerialNumber, String searchType, String searchValue) {
+        return assetDao.getAssetList(userId,homeSerialNumber,searchType,searchValue);
     }
     /**
      * 获取资产详情
@@ -62,7 +62,15 @@ public class AssetService {
     /**
      * 根据序列号获取资产
      */
-    public Asset getAssetBySerialNumber(int userId,String assetSerialNumber) {
-        return assetDao.getAssetBySerialNumber(userId,assetSerialNumber);
+    public Asset getAssetByASN(int userId,String assetSerialNumber) {
+        return assetDao.getAssetByASN(userId,assetSerialNumber);
+    }
+
+    public List<Asset> getFixedAsset(int userId, String homeSerialNumber) {
+        return assetDao.getFixedAsset(userId, homeSerialNumber);
+    }
+
+    public List<Asset> getFluidAsset(int userId, String homeSerialNumber) {
+        return assetDao.getFluidAsset(userId, homeSerialNumber);
     }
 }

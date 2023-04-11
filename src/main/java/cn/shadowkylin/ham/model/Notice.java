@@ -8,8 +8,20 @@ import java.sql.Date;
  * @描述
  */
 public class Notice {
+    //公告ID
+    Integer id;
+    //公告内容
     String content;
-    Date date;
+    //创建日期
+    Date createDate;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getContent() {
         return content;
@@ -19,11 +31,11 @@ public class Notice {
         this.content = content;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 }

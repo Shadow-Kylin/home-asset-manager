@@ -56,7 +56,11 @@ public class AccountService {
     /**
      * 批量删除账户
      */
-    public void deleteAccountList(List<Integer> idList) {
+    public void deleteAccountList(int[] idList) {
         accountDao.deleteAccountList(idList);
+    }
+
+    public List<User> getAccountsByHSN(String homeSerialNumber) {
+        return accountDao.getAccountsByHSN(homeSerialNumber);
     }
 }

@@ -6,7 +6,9 @@ package cn.shadowkylin.ham.model;
  * @描述
  */
 public class AssetType {
+    //资产类型ID
     private Integer id;
+    //资产类型名称
     private String name;
 
     public Integer getId() {

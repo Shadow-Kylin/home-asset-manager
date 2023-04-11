@@ -8,16 +8,32 @@ import java.sql.Date;
  * @描述
  */
 public class Finance {
+    //资产ID
     private Integer id;
     //资产序列号
     private String assetSerialNumber;
     //财务名称
     private String name;
+    //创建者ID
     private Integer userId;
-    private Date date;
+    //创建时间
+    private Date createDate;
+    //财务类型
     private byte type;
+    //财务金额
     private Double amount;
+    //备注
     private String notes;
+    //所属家庭序列号
+    private String homeSerialNumber;
+
+    public String getHomeSerialNumber() {
+        return homeSerialNumber;
+    }
+
+    public void setHomeSerialNumber(String homeSerialNumber) {
+        this.homeSerialNumber = homeSerialNumber;
+    }
 
     public String getName() {
         return name;
@@ -51,12 +67,12 @@ public class Finance {
         this.userId = userId;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public byte getType() {

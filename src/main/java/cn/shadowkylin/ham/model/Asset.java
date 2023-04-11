@@ -8,17 +8,46 @@ import java.sql.Date;
  * @描述
  */
 public class Asset {
+    //资产ID
     private Integer id;
+    //资产类型ID
     private Integer assetTypeId;
+    //资产类型名称
     private String assetTypeName;
-    //资产序列号
+    //关联资产序列号
     private String assetSerialNumber;
+    //所属家庭序列号
+    private String homeSerialNumber;
+    //创建者ID
     private Integer userId;
+    //创建者名称
+    private String username;
+    //资产名称
     private String name;
+    //购买日期
     private Date purchaseDate;
+    //购买价格
     private Double purchasePrice;
+    //当前价值
     private Double currentValue;
+    //备注
     private String notes;
+
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String username) {
+        this.username = username;
+    }
+
+    public String getHomeSerialNumber() {
+        return homeSerialNumber;
+    }
+
+    public void setHomeSerialNumber(String homeSerialNumber) {
+        this.homeSerialNumber = homeSerialNumber;
+    }
 
     public String getAssetSerialNumber() {
         return assetSerialNumber;

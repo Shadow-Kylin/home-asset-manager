@@ -10,6 +10,11 @@
         FROM account
         WHERE id = #{id}
     </select>
+    <select id="getAccountsByHSN" resultType="List">
+        SELECT *
+        FROM account
+        WHERE home_serial_number = #{homeSerialNumber}
+    </select>
     <insert id="addAccount">
         INSERT INTO account (username, password, phone, created_time)
         VALUES ( #{username}, #{password}, #{phone}, #{createdTime})
