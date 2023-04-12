@@ -4,7 +4,13 @@
     <select id="getFinanceList" resultType="Finance">
         SELECT *
         FROM finance
-        where user_id = #{userId}
+        where
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
+            user_id = #{userId}
+        </if>
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
+            home_serial_number = #{homeSerialNumber}
+        </if>
         <if test="searchType == 'name'">
             AND name LIKE CONCAT('%',#{searchValue},'%')
         </if>
@@ -12,7 +18,7 @@
             AND asset_serial_number LIKE CONCAT('%',#{searchValue},'%')
         </if>
         <if test="searchType == 'date'">
-            AND date = #{searchValue}
+            AND created_date = #{searchValue}
         </if>
         <if test="searchType == 'amount'">
             AND amount = #{searchValue}
@@ -33,14 +39,14 @@
         WHERE id = #{financeId}
     </select>
     <insert id="addFinance">
-        INSERT INTO finance (user_id, name, asset_serial_number, date, type, amount, notes)
-        VALUES (#{userId}, #{name}, #{assetSerialNumber}, #{date}, #{type}, #{amount}, #{notes})
+        INSERT INTO finance (user_id, name, asset_serial_number, created_date, type, amount, notes)
+        VALUES (#{userId}, #{name}, #{assetSerialNumber}, #{createdDate}, #{type}, #{amount}, #{notes})
     </insert>
     <insert id="addFinanceList">
-        INSERT INTO finance (user_id, name, asset_serial_number, date, type, amount, notes)
+        INSERT INTO finance (user_id, name, asset_serial_number, created_date, type, amount, notes)
         VALUES
         <foreach collection="financeList" item="finance" separator=",">
-            (#{finance.userId}, #{finance.name}, #{finance.assetSerialNumber}, #{finance.date}, #{finance.type},
+            (#{finance.userId}, #{finance.name}, #{finance.assetSerialNumber}, #{finance.createdDate}, #{finance.type},
             #{finance.amount}, #{finance.notes})
         </foreach>
     </insert>
@@ -49,7 +55,6 @@
         SET user_id             = #{userId},
             name                = #{name},
             asset_serial_number = #{assetSerialNumber},
-            date                = #{date},
             type                = #{type},
             amount              = #{amount},
             notes               = #{notes}
@@ -72,16 +77,33 @@
     <select id="getIncomeByYear" resultType="Finance">
         SELECT *
         FROM finance
-        WHERE user_id = #{userId}
+        WHERE
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
+            user_id = #{userId}
+        </if>
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
+            home_serial_number = #{homeSerialNumber}
+        </if>
         AND type = 1
-        AND date LIKE CONCAT(#{year},'%')
+        AND created_date LIKE CONCAT(#{year},'%')
     </select>
     <!--获取指定年份的支出记录-->
     <select id="getExpenditureByYear" resultType="Finance">
         SELECT *
         FROM finance
-        WHERE user_id = #{userId}
+        WHERE
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
+            user_id = #{userId}
+        </if>
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
+            home_serial_number = #{homeSerialNumber}
+        </if>
         AND type = 0
-        AND date LIKE CONCAT(#{year},'%')
+        AND created_date LIKE CONCAT(#{year},'%')
     </select>
+    <update id="updateFinanceHSN">
+        UPDATE finance
+        SET home_serial_number = #{homeSerialNumber}
+        WHERE user_id = #{requestId}
+    </update>
 </mapper>

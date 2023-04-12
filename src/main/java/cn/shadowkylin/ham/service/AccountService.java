@@ -1,10 +1,11 @@
 package cn.shadowkylin.ham.service;
 
 import cn.shadowkylin.ham.dao.AccountDao;
+import cn.shadowkylin.ham.dao.HomeDao;
 import cn.shadowkylin.ham.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -15,8 +16,10 @@ import java.util.List;
 
 @Service
 public class AccountService {
-    @Autowired
+    @Resource
     private AccountDao accountDao;
+    @Resource
+    private HomeDao homeDao;
 
     /**
      * 获取账户列表
@@ -62,5 +65,28 @@ public class AccountService {
 
     public List<User> getAccountsByHSN(String homeSerialNumber) {
         return accountDao.getAccountsByHSN(homeSerialNumber);
+    }
+
+    public void removeUserFromHome(int removeId) {
+        accountDao.removeUserFromHome(removeId);
+    }
+
+    public boolean userHasJoinedHome(int userId) {
+        return accountDao.userHasJoinedHome(userId) != "";
+    }
+
+    public void updateUserHSN(int userId, String homeSerialNumber) {
+        accountDao.updateUserHSN(userId, homeSerialNumber);
+    }
+
+    public void disbandHome(String homeSerialNumber) {
+        //将用户的家庭序列号置空
+        accountDao.disbandHome(homeSerialNumber);
+        //从家庭表中删除该家庭
+        homeDao.deleteHome(homeSerialNumber);
+    }
+
+    public String getHSNByUserId(int userId) {
+        return accountDao.getHSNByUserId(userId);
     }
 }

@@ -17,11 +17,21 @@ public class User {
     //手机号
     private String phone;
     //创建时间
-    private Date createdTime;
+    private Date createdDate;
     //签名
     private String signature;
     //所属家庭序列号
     private String homeSerialNumber;
+    //家庭名称
+    private String homeName;
+
+    public String getHomeName() {
+        return homeName;
+    }
+
+    public void setHomeName(String homeName) {
+        this.homeName = homeName;
+    }
 
     public String getHomeSerialNumber() {
         return homeSerialNumber;
@@ -39,12 +49,12 @@ public class User {
         this.signature = signature;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Integer getId() {

@@ -13,7 +13,7 @@ public class Notice {
     //公告内容
     String content;
     //创建日期
-    Date createDate;
+    Date createdDate;
 
     public Integer getId() {
         return id;
@@ -31,11 +31,11 @@ public class Notice {
         this.content = content;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

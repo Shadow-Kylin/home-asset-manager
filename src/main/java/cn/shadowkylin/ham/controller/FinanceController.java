@@ -3,6 +3,7 @@ package cn.shadowkylin.ham.controller;
 import cn.shadowkylin.ham.common.HttpStatus;
 import cn.shadowkylin.ham.common.ResultUtil;
 import cn.shadowkylin.ham.model.Finance;
+import cn.shadowkylin.ham.service.AccountService;
 import cn.shadowkylin.ham.service.AssetService;
 import cn.shadowkylin.ham.service.FinanceService;
 import com.github.pagehelper.PageHelper;
@@ -25,12 +26,16 @@ public class FinanceController {
     private FinanceService financeService;
     @Resource
     private AssetService assetService;
+    @Resource
+    private AccountService accountService;
+
     /**
      * 获取财务列表
      */
-    @GetMapping("/getFinanceList/{userId}")
+    @GetMapping("/getFinanceList")
     public ResultUtil<Object> getFinanceList(
-            @PathVariable("userId") int userId,
+            @RequestParam("userId") int userId,
+            @RequestParam("homeSerialNumber") String homeSerialNumber,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "searchType", defaultValue = "") String searchType,
@@ -39,7 +44,11 @@ public class FinanceController {
         //使用PageHelper分页
         PageHelper.startPage(pageNum, pageSize);
         //获取财务列表
-        List<Finance> financeList = financeService.getFinanceList(userId, searchType, searchValue,type);
+        List<Finance> financeList = financeService.getFinanceList(userId, homeSerialNumber, searchType, searchValue, type);
+        //根据用户ID获取用户名称
+        for (Finance finance : financeList) {
+            finance.setUserName(accountService.getAccountDetail(finance.getUserId()).getUsername());
+        }
         //使用PageInfo包装查询结果
         PageInfo<Finance> pageInfo = new PageInfo<>(financeList);
         return ResultUtil.success("获取财务列表成功", pageInfo);
@@ -58,9 +67,10 @@ public class FinanceController {
      */
     @PostMapping("/addFinance")
     public ResultUtil<Object> addFinance(@RequestBody Finance finance) {
-        //查询关联资产序列号assetSerialNumber是否存在
-        if(assetService.getAssetByASN(finance.getUserId(),finance.getAssetSerialNumber()) == null)
-            return ResultUtil.error("关联资产序列号不存在", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
+        //检查资产有效性
+        if (assetService.checkAsset(finance.getUserId(), finance.getHomeSerialNumber(),
+                finance.getAssetSerialNumber()))
+            return ResultUtil.error("关联资产序列号无效", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
         financeService.addFinance(finance);
         return ResultUtil.success("添加财务成功", null);
     }
@@ -70,6 +80,12 @@ public class FinanceController {
      */
     @PostMapping("/addFinanceList")
     public ResultUtil<Object> addFinanceList(@RequestBody List<Finance> financeList) {
+        //检查资产有效性
+        for (Finance finance : financeList) {
+            if (assetService.checkAsset(finance.getUserId(), finance.getHomeSerialNumber(),
+                    finance.getAssetSerialNumber()))
+                return ResultUtil.error("关联资产序列号无效", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
+        }
         financeService.addFinanceList(financeList);
         return ResultUtil.success("批量添加财务成功", null);
     }
@@ -79,10 +95,10 @@ public class FinanceController {
      */
     @PostMapping("/updateFinance")
     public ResultUtil<Object> updateFinance(@RequestBody Finance finance) {
-        //查询关联资产序列号assetSerialNumber是否存在
-        if(assetService.getAssetByASN(finance.getUserId(),finance.getAssetSerialNumber()) == null)
-            return ResultUtil.error("关联资产序列号不存在", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
-
+        //检查资产有效性
+        if (assetService.checkAsset(finance.getUserId(), finance.getHomeSerialNumber(),
+                finance.getAssetSerialNumber()))
+            return ResultUtil.error("关联资产序列号无效", null, HttpStatus.ASSET_SERIAL_NUMBER_NOT_EXIST);
         financeService.updateFinance(finance);
         return ResultUtil.success("修改财务成功", null);
     }
@@ -104,6 +120,7 @@ public class FinanceController {
         financeService.deleteFinanceList(financeIdList);
         return ResultUtil.success("批量删除财务成功", null);
     }
+
     /**
      * 获取指定年份的财务收入列表
      */
@@ -111,10 +128,13 @@ public class FinanceController {
     public ResultUtil<Object> getFinanceListByYear(
             @PathVariable("userId") int userId,
             @PathVariable("year") int year) {
+        //获取用户家庭序列号
+        String homeSerialNumber = accountService.getAccountDetail(userId).getHomeSerialNumber();
         //获取该年每个月的财务收入数组
-        double[] incomeList = financeService.getIncomeByYear(userId, year);
+        double[] incomeList = financeService.getIncomeByYear(userId,homeSerialNumber, year);
         return ResultUtil.success("获取财务收入列表成功", incomeList);
     }
+
     /**
      * 获取指定年份的财务支出列表
      */
@@ -122,8 +142,10 @@ public class FinanceController {
     public ResultUtil<Object> getExpenseByYear(
             @PathVariable("userId") int userId,
             @PathVariable("year") int year) {
+        //获取用户家庭序列号
+        String homeSerialNumber = accountService.getAccountDetail(userId).getHomeSerialNumber();
         //获取该年每个月的财务支出数组
-        double[] expenseList = financeService.getExpenditureByYear(userId, year);
+        double[] expenseList = financeService.getExpenditureByYear(userId,homeSerialNumber, year);
         return ResultUtil.success("获取财务支出列表成功", expenseList);
     }
 }

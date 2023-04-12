@@ -1,13 +1,20 @@
 package cn.shadowkylin.ham.config;
 
 import cn.shadowkylin.ham.common.TokenInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.http.HttpRequestInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @创建人 li cong
@@ -17,7 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Autowired
+    @Resource
     private TokenInterceptor tokenInterceptor;
     /**
      * 请求拦截器
@@ -28,5 +35,18 @@ public class WebConfig implements WebMvcConfigurer {
         InterceptorRegistration registration = registry.addInterceptor(tokenInterceptor);
         //拦截路径
         registration.addPathPatterns("/**").excludePathPatterns("/auth/login","/auth/register","/auth/sendSms");
+    }
+
+    /**
+     * 解决gson与jackson冲突
+     */
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        //清除默认的转换器
+        converters.clear();
+        //添加gson转换器，不去除null值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter(gson);
+        converters.add(gsonConverter);
     }
 }

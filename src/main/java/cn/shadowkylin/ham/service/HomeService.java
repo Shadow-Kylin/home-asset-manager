@@ -4,6 +4,8 @@ import cn.shadowkylin.ham.dao.HomeDao;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Date;
+import java.util.UUID;
 
 /**
  * @创建人 li cong
@@ -17,7 +19,7 @@ public class HomeService {
     private HomeDao homeDao;
 
     public boolean isHomeExist(String homeSerialNumber) {
-        return homeDao.isHomeExist(homeSerialNumber);
+        return homeDao.isHomeExist(homeSerialNumber)!=null;
     }
 
     public String getHSNByUserId(int requestId) {
@@ -25,6 +27,14 @@ public class HomeService {
     }
 
     public int getCreatorIdByHSN(String homeSerialNumber) {
-        return homeDao.getCreatorByHSN(homeSerialNumber);
+        return homeDao.getCreatorIdByHSN(homeSerialNumber);
+    }
+
+    public void createHome(int requestId, String homeName, String homeSerialNumber, Date createdDate) {
+        homeDao.createHome(requestId, homeName, homeSerialNumber,createdDate);
+    }
+
+    public boolean isHomeCreator(String homeSerialNumber, int userId) {
+        return homeDao.isHomeCreator(homeSerialNumber, userId) != null;
     }
 }

@@ -48,14 +48,13 @@ public interface AssetDao {
     void deleteAssetList(int[] assetIdList);
 
     /**
-     * 根据序列号获取资产
-     */
-    Asset getAssetByASN(int userId, String assetSerialNumber);
-
-    /**
      * 获取固定资产
      */
     List<Asset> getFixedAsset(int userId, String homeSerialNumber);
 
     List<Asset> getFluidAsset(int userId, String homeSerialNumber);
+
+    String checkAsset(Integer userId, String homeSerialNumber, String assetSerialNumber);
+
+    void updateAssetsHSN(int requestId, String homeSerialNumber);
 }

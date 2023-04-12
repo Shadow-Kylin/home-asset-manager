@@ -16,8 +16,10 @@ public class Finance {
     private String name;
     //创建者ID
     private Integer userId;
+    //创建者名称
+    private String userName;
     //创建时间
-    private Date createDate;
+    private Date createdDate;
     //财务类型
     private byte type;
     //财务金额
@@ -26,6 +28,14 @@ public class Finance {
     private String notes;
     //所属家庭序列号
     private String homeSerialNumber;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getHomeSerialNumber() {
         return homeSerialNumber;
@@ -67,12 +77,12 @@ public class Finance {
         this.userId = userId;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public byte getType() {

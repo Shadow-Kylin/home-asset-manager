@@ -5,10 +5,10 @@
         SELECT *
         FROM asset
         WHERE
-        <if test="StringUtils.isEmpty(homeSerialNumber)">
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
             user_id = #{userId}
         </if>
-        <if test="!StringUtils.isEmpty(homeSerialNumber)">
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
             home_serial_number = #{homeSerialNumber}
         </if>
         <if test="searchType == 'name'">
@@ -33,21 +33,15 @@
             AND notes LIKE CONCAT('%',#{searchValue},'%')
         </if>
     </select>
-    <select id="getAssetByASN" resultType="Asset">
-        SELECT *
-        FROM asset
-        WHERE user_id = #{userId}
-        AND asset_serial_number = #{assetSerialNumber}
-    </select>
     <select id="getFixedAsset" resultType="Asset">
         SELECT *
         FROM asset
         WHERE
-        asset_type_id in (1,2,3,4,5);
-        <if test="StringUtils.isEmpty(homeSerialNumber)">
+        asset_type_id in (1,2,3,4,5) AND
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
             user_id = #{userId}
         </if>
-        <if test="!StringUtils.isEmpty(homeSerialNumber)">
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
             home_serial_number = #{homeSerialNumber}
         </if>
     </select>
@@ -55,10 +49,11 @@
         SELECT *
         FROM asset
         WHERE
-        <if test="StringUtils.isEmpty(homeSerialNumber)">
+        asset_type_id in (6,7,8,9,10) AND
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
             user_id = #{userId}
         </if>
-        <if test="!StringUtils.isEmpty(homeSerialNumber)">
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
             home_serial_number = #{homeSerialNumber}
         </if>
     </select>
@@ -105,4 +100,21 @@
             #{id}
         </foreach>
     </delete>
+    <select id="checkAsset" resultType="String">
+        SELECT asset_serial_number
+        FROM asset
+        WHERE
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
+            user_id = #{userId}
+        </if>
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
+            home_serial_number = #{homeSerialNumber}
+        </if>
+        AND asset_serial_number = #{assetSerialNumber}
+    </select>
+    <update id="updateAssetsHSN">
+        UPDATE asset
+        SET home_serial_number = #{homeSerialNumber}
+        WHERE user_id = #{requestId}
+    </update>
 </mapper>

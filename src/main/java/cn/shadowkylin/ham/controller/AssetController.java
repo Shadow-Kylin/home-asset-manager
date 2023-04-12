@@ -7,11 +7,12 @@ import cn.shadowkylin.ham.service.AssetService;
 import cn.shadowkylin.ham.service.AssetTypeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @创建人 li cong
@@ -35,18 +36,19 @@ public class AssetController {
      * 获取资产列表
      * PathVariable：获取url中的路径参数 例如/getAssetList/userId
      * RequestParam：获取url中的查询参数 例如/getAssetList?userId=1
-     * @param userId 用户ID
+     *
+     * @param userId           用户ID
      * @param homeSerialNumber 家庭序列号
-     * @param pageNum 页码
-     * @param pageSize 每页数量
-     * @param searchType 搜索类型
-     * @param searchValue 搜索值
-     * @param type 用于区分资产类型，fixed为固定资产，fluid为流动资产
+     * @param pageNum          页码
+     * @param pageSize         每页数量
+     * @param searchType       搜索类型
+     * @param searchValue      搜索值
+     * @param type             用于区分资产类型，fixed为固定资产，fluid为流动资产
      */
-    @GetMapping("/getAssetList/")
+    @GetMapping("/getAssetList")
     public ResultUtil<Object> getAssetList(
             @RequestParam(value = "userId") int userId,
-            @RequestParam("homeSerialNumber") String homeSerialNumber,
+            @RequestParam(value = "homeSerialNumber") String homeSerialNumber,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "searchType", defaultValue = "") String searchType,
@@ -66,7 +68,7 @@ public class AssetController {
             searchType = "assetType";
             searchValue = "6,7,8,9,10";
         }
-        List<Asset> assetList = assetService.getAssetList(userId,homeSerialNumber, searchType, searchValue);
+        List<Asset> assetList = assetService.getAssetList(userId, homeSerialNumber, searchType, searchValue);
         //将Asset的asset_type_id转换为asset_type_name，user_id转换为user_name
         for (Asset asset : assetList) {
             asset.setAssetTypeName(assetTypeService.getAssetTypeDetail(asset.getAssetTypeId()).getName());
@@ -79,6 +81,7 @@ public class AssetController {
 
     /**
      * 获取资产详情
+     *
      * @param assetId 资产ID
      */
     @GetMapping("/getAssetDetail/{assetId}")
@@ -88,6 +91,7 @@ public class AssetController {
 
     /**
      * 添加资产
+     *
      * @param asset 资产信息
      */
     @PostMapping("/addAsset")
@@ -100,6 +104,7 @@ public class AssetController {
 
     /**
      * 批量添加资产
+     *
      * @param assetList 资产信息列表
      */
     @PostMapping("/addAssetList")
@@ -110,6 +115,7 @@ public class AssetController {
 
     /**
      * 修改资产
+     *
      * @param asset 资产信息
      */
     @PostMapping("/updateAsset")
@@ -120,6 +126,7 @@ public class AssetController {
 
     /**
      * 删除资产
+     *
      * @param assetId 资产ID
      */
     @PostMapping("/deleteAsset/{assetId}")
@@ -130,6 +137,7 @@ public class AssetController {
 
     /**
      * 批量删除资产
+     *
      * @param assetIdList 资产ID列表
      */
     @PostMapping("/deleteAssetList")
@@ -137,9 +145,11 @@ public class AssetController {
         assetService.deleteAssetList(assetIdList);
         return ResultUtil.success("批量删除资产成功");
     }
+
     /**
      * 统计用户或者家庭每种固定类型资产的价值
-     * @param userId 用户ID
+     *
+     * @param userId           用户ID
      * @param homeSerialNumber 家庭序列号
      */
     @GetMapping("/analyseFixedAsset")
@@ -147,18 +157,34 @@ public class AssetController {
             @RequestParam(value = "userId") int userId,
             @RequestParam(value = "homeSerialNumber") String homeSerialNumber) {
         //通过用户ID或家庭序列号获取固定资产列表
-        List<Asset> assetList = assetService.getFixedAsset(userId,homeSerialNumber);
-        //定义一个double类型的数组，用于存放每种资产的总价值
-        double[] typeList = new double[10];
-        //遍历资产列表，将每种资产的价值加到对应的typeList数组中
+        List<Asset> assetList = assetService.getFixedAsset(userId, homeSerialNumber);
+        //将资产类型ID转换为资产类型名称
         for (Asset asset : assetList) {
-            typeList[asset.getAssetTypeId() - 1] += asset.getCurrentValue();
+            asset.setAssetTypeName(assetTypeService.getAssetTypeDetail(asset.getAssetTypeId()).getName());
         }
-        return ResultUtil.success("获取资产列表成功",typeList);
+        //统计不同类型资产的价值
+        Map<String, Double> currentValueMap = new HashMap<>();
+        for (Asset asset : assetList) {
+            if (currentValueMap.containsKey(asset.getAssetTypeName())) {
+                currentValueMap.put(asset.getAssetTypeName(), currentValueMap.get(asset.getAssetTypeName()) + asset.getCurrentValue());
+            } else {
+                currentValueMap.put(asset.getAssetTypeName(), asset.getCurrentValue());
+            }
+        }
+        JsonArray jsonArray = new JsonArray();
+        for(Map.Entry<String, Double> entry : currentValueMap.entrySet()) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("name", entry.getKey());
+            jsonObject.addProperty("value", entry.getValue());
+            jsonArray.add(jsonObject);
+        }
+        return ResultUtil.success("统计用户或者家庭每种固定类型资产的价值成功", jsonArray);
     }
+
     /**
      * 统计用户或者家庭每种流动类型资产的价值
-     * @param userId 用户ID
+     *
+     * @param userId           用户ID
      * @param homeSerialNumber 家庭序列号
      */
     @GetMapping("/analyseFluidAsset")
@@ -166,13 +192,27 @@ public class AssetController {
             @RequestParam(value = "userId") int userId,
             @RequestParam(value = "homeSerialNumber") String homeSerialNumber) {
         //通过用户ID或家庭序列号获取流动资产列表
-        List<Asset> assetList = assetService.getFluidAsset(userId,homeSerialNumber);
-        //定义一个double类型的数组，用于存放每种资产的总价值
-        double[] typeList = new double[10];
-        //遍历资产列表，将每种资产的价值加到对应的typeList数组中
+        List<Asset> assetList = assetService.getFluidAsset(userId, homeSerialNumber);
+        //将资产类型ID转换为资产类型名称
         for (Asset asset : assetList) {
-            typeList[asset.getAssetTypeId() - 1] += asset.getCurrentValue();
+            asset.setAssetTypeName(assetTypeService.getAssetTypeDetail(asset.getAssetTypeId()).getName());
         }
-        return ResultUtil.success("获取资产列表成功",typeList);
+        //统计不同类型资产的价值
+        Map<String, Double> currentValueMap = new HashMap<>();
+        for (Asset asset : assetList) {
+            if (currentValueMap.containsKey(asset.getAssetTypeName())) {
+                currentValueMap.put(asset.getAssetTypeName(), currentValueMap.get(asset.getAssetTypeName()) + asset.getCurrentValue());
+            } else {
+                currentValueMap.put(asset.getAssetTypeName(), asset.getCurrentValue());
+            }
+        }
+        JsonArray jsonArray = new JsonArray();
+        for(Map.Entry<String, Double> entry : currentValueMap.entrySet()) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("name", entry.getKey());
+            jsonObject.addProperty("value", entry.getValue());
+            jsonArray.add(jsonObject);
+        }
+        return ResultUtil.success("统计用户或者家庭每种流动类型资产的价值成功", jsonArray);
     }
 }

@@ -15,7 +15,7 @@ public class Home {
     //家庭创建者用户名
     private String creatorName;
     //家庭创建日期
-    private String createDate;
+    private String createdDate;
 
     public String getCreatorName() {
         return creatorName;
@@ -49,11 +49,11 @@ public class Home {
         this.creator = creator;
     }
 
-    public String getCreateDate() {
-        return createDate;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 }

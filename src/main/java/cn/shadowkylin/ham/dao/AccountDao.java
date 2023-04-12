@@ -38,4 +38,19 @@ public interface AccountDao {
     void deleteAccountList(int[] idList);
 
     List<User> getAccountsByHSN(String homeSerialNumber);
+
+    void removeUserFromHome(int removeId);
+
+    /**
+     * 获取用户加入的家庭序列号，没加入就返回""
+     * @param userId
+     * @return
+     */
+    String userHasJoinedHome(int userId);
+
+    void updateUserHSN(int userId, String homeSerialNumber);
+
+    void disbandHome(String homeSerialNumber);
+
+    String getHSNByUserId(int userId);
 }

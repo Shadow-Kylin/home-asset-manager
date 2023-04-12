@@ -1,9 +1,12 @@
 package cn.shadowkylin.ham.service;
 
 import cn.shadowkylin.ham.dao.AuthDao;
+import cn.shadowkylin.ham.dao.HomeDao;
 import cn.shadowkylin.ham.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @创建人 li cong
@@ -13,11 +16,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    @Autowired
+    @Resource
     private AuthDao authDao;
+    @Resource
+    private HomeDao homeDao;
     //登录
     public User login(String phone,String password){
-        return authDao.login(phone,password);
+
+        User loginUser=authDao.login(phone,password);
+        //根据家庭序列号获取家庭名称
+        if(loginUser!=null){
+            loginUser.setHomeName(homeDao.getHomeName(loginUser.getHomeSerialNumber()));
+        }
+        return loginUser;
     }
     //检查手机号是否已经注册
     public boolean isExist(String phone){
@@ -31,5 +42,13 @@ public class AuthService {
 
     public void updatePassword(User user) {
         authDao.updatePassword(user);
+    }
+
+    public void updatePassword(int userId, String newPwd) {
+        authDao.updatePassword(userId, newPwd);
+    }
+
+    public String getPassword(int userId) {
+        return authDao.getPassword(userId);
     }
 }

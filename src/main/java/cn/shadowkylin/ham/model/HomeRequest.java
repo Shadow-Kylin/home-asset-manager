@@ -21,7 +21,7 @@ public class HomeRequest {
     //请求状态
     private String status;
     //请求日期
-    private String createDate;
+    private String createdDate;
     //备注
     private String notes;
 
@@ -81,12 +81,12 @@ public class HomeRequest {
         this.status = status;
     }
 
-    public String getCreateDate() {
-        return createDate;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 
     public String getNotes() {

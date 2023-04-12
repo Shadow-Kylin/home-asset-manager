@@ -30,4 +30,8 @@ public interface AuthDao {
      * @param user
      */
     void updatePassword(User user);
+
+    void updatePassword(int userId, String newPwd);
+
+    String getPassword(int userId);
 }

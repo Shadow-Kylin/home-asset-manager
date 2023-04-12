@@ -1,6 +1,9 @@
 package cn.shadowkylin.ham.dao;
 
+import cn.shadowkylin.ham.model.Home;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.sql.Date;
 
 /**
  * @创建人 li cong
@@ -11,9 +14,16 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface HomeDao {
 
-    boolean isHomeExist(String homeSerialNumber);
+    Home isHomeExist(String homeSerialNumber);
 
     String getHSNByUserId(int requestId);
+    void createHome(int requestId, String homeName, String homeSerialNumber, Date createdDate);
 
-    int getCreatorByHSN(String homeSerialNumber);
+    void deleteHome(String homeSerialNumber);
+
+    Home isHomeCreator(String homeSerialNumber, int userId);
+
+    String getHomeName(String homeSerialNumber);
+
+    int getCreatorIdByHSN(String homeSerialNumber);
 }

@@ -21,4 +21,12 @@ public class HttpStatus {
     public static final int PHONE_NOT_EXIST = 1007;
     // 资产序列号不存在
     public static final int ASSET_SERIAL_NUMBER_NOT_EXIST = 1008;
+    //无权限UNAUTHORIZED
+    public static final int UNAUTHORIZED = 1009;
+    //家庭不存在
+    public static final int HOME_NOT_EXIST = 1010;
+    //违法操作
+    public static final int ILLEGAL_OPERATION = 1011;
+    public static final Object PASSWORD_ERROR = 1012;
+    public static final Object PASSWORD_SAME = 1013;
 }

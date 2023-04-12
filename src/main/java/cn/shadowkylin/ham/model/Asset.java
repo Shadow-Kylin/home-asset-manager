@@ -21,7 +21,7 @@ public class Asset {
     //创建者ID
     private Integer userId;
     //创建者名称
-    private String username;
+    private String userName;
     //资产名称
     private String name;
     //购买日期
@@ -34,11 +34,11 @@ public class Asset {
     private String notes;
 
     public String getUserName() {
-        return username;
+        return userName;
     }
 
-    public void setUserName(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getHomeSerialNumber() {

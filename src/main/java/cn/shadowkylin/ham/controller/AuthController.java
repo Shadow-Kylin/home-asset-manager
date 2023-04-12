@@ -4,7 +4,6 @@ import cn.shadowkylin.ham.common.*;
 import cn.shadowkylin.ham.model.User;
 import cn.shadowkylin.ham.service.AuthService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,11 +21,11 @@ import java.util.Map;
 public class AuthController {
     //Resource和Autowired的区别：Resource是J2EE的注解，Autowired是Spring的注解，Resource默认按照名称装配，而Autowired默认按照类型装配
     //如果没有指定name属性，当注解写在字段上，即默认取字段名进行按照名称查找；如果注解写在setter方法上，默认取属性名进行装配。
-    @Autowired
+    @Resource
     private JwtTokenUtil jwtTokenUtil;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
-    @Autowired
+    @Resource
     private AuthService authService;
 
     /**
@@ -63,7 +62,7 @@ public class AuthController {
             return ResultUtil.error("该手机号已经注册！", null, HttpStatus.PHONE_EXIST);
         }
         //判断验证码是否正确
-        String code1 = (String)redisUtil.get("code-" + user.getPhone());
+        String code1 = (String) redisUtil.get("code-" + user.getPhone());
         if (StringUtils.isBlank(code1)) {
             return ResultUtil.error("验证码已过期！", null, HttpStatus.CODE_EXPIRED);
         }
@@ -89,12 +88,19 @@ public class AuthController {
      * 修改密码
      */
     @PostMapping("/updatePassword")
-    public ResultUtil<Object> updatePassword(@RequestBody User user) {
-        if (user == null || user.getPhone() == null || user.getPassword() == null) {
-            return ResultUtil.error("参数错误！");
+    public ResultUtil<Object> updatePassword(
+            @RequestParam("oldPwd") String oldPwd,
+            @RequestParam("newPwd") String newPwd,
+            @RequestParam("userId") int userId) {
+        //判断旧密码是否正确
+        if (!oldPwd.equals(authService.getPassword(userId))) {
+            return ResultUtil.error("旧密码错误！", HttpStatus.PASSWORD_ERROR);
         }
-        //修改密码
-        authService.updatePassword(user);
+        //判断新密码是否与旧密码相同
+        if (oldPwd.equals(newPwd)) {
+            return ResultUtil.error("新密码不能与旧密码相同！", HttpStatus.PASSWORD_SAME);
+        }
+        authService.updatePassword(userId,newPwd);
         return ResultUtil.success("修改密码成功！");
     }
 
@@ -134,7 +140,7 @@ public class AuthController {
 
         //测试用下面语句，发送次数有限
         //redis设置相同键的值会覆盖，但是过期时间不会覆盖，会叠加，所以要先删除，再设置
-        if(redisUtil.hasKey("code-" + phone)){
+        if (redisUtil.hasKey("code-" + phone)) {
             redisUtil.del("code-" + phone);
         }
         redisUtil.set("code-" + phone, code, 60 * 30);

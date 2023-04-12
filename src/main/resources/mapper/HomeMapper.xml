@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.shadowkylin.ham.dao.HomeDao">
-    <select id="isHome" resultType="int">
-        SELECT COUNT(*)
+    <select id="isHomeExist" resultType="Home">
+        SELECT *
         FROM home
         WHERE home_serial_number = #{homeSerialNumber}
     </select>
     <select id="getHSNByUserId" resultType="String">
         SELECT home_serial_number
         FROM home
-        WHERE user_id = #{userId}
+        WHERE creator = #{userId}
     </select>
     <select id="getCreatorIdByHSN" resultType="int">
-        SELECT creator_id
+        SELECT creator
+        FROM home
+        WHERE home_serial_number = #{homeSerialNumber}
+    </select>
+    <insert id="createHome">
+        INSERT INTO home (name,home_serial_number, creator, created_date)
+        VALUES (#{homeName},#{homeSerialNumber}, #{requestId}, #{createdDate})
+    </insert>
+    <delete id="deleteHome">
+        DELETE FROM home
+        WHERE home_serial_number = #{homeSerialNumber}
+    </delete>
+    <select id="isHomeCreator" resultType="Home">
+        SELECT *
+        FROM home
+        WHERE home_serial_number = #{homeSerialNumber}
+        AND creator = #{userId}
+    </select>
+    <select id="getHomeName" resultType="String">
+        SELECT name
         FROM home
         WHERE home_serial_number = #{homeSerialNumber}
     </select>

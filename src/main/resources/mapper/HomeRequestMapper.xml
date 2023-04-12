@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.shadowkylin.ham.dao.HomeRequestDao">
+    <update id="agreeJoinHome">
+        UPDATE home_request
+        SET status = 1
+        WHERE home_serial_number = #{homeSerialNumber}
+        AND join_id = #{joinId}
+    </update>
+    <update id="refuseJoinHome">
+        UPDATE home_request
+        SET status = 2
+        WHERE home_serial_number = #{homeSerialNumber}
+        AND application_id = #{joinId}
+    </update>
+    <select id="getHomeRequestList" resultType="HomeRequest">
+        SELECT *
+        FROM home_request
+        WHERE home_serial_number = #{homeSerialNumber}
+    </select>
+    <select id="isRequestExist" resultType="HomeRequest">
+        SELECT *
+        FROM home_request
+        WHERE home_serial_number = #{homeSerialNumber}
+        AND application_id = #{userId}
+    </select>
+    <insert id="joinHome">
+        INSERT INTO home_request (home_serial_number, application_id, creator_id, status,create_date)
+        VALUES (#{homeSerialNumber}, #{userId}, #{recipient_id}, 0, #{createDate})
+    </insert>
+</mapper>

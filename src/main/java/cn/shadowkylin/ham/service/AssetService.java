@@ -59,12 +59,6 @@ public class AssetService {
     public void deleteAssetList(int[] assetIdList) {
         assetDao.deleteAssetList(assetIdList);
     }
-    /**
-     * 根据序列号获取资产
-     */
-    public Asset getAssetByASN(int userId,String assetSerialNumber) {
-        return assetDao.getAssetByASN(userId,assetSerialNumber);
-    }
 
     public List<Asset> getFixedAsset(int userId, String homeSerialNumber) {
         return assetDao.getFixedAsset(userId, homeSerialNumber);
@@ -72,5 +66,13 @@ public class AssetService {
 
     public List<Asset> getFluidAsset(int userId, String homeSerialNumber) {
         return assetDao.getFluidAsset(userId, homeSerialNumber);
+    }
+
+    public boolean checkAsset(Integer userId, String homeSerialNumber, String assetSerialNumber) {
+        return assetDao.checkAsset(userId, homeSerialNumber, assetSerialNumber)!=null;
+    }
+
+    public void updateAssetsHSN(int requestId, String homeSerialNumber) {
+        assetDao.updateAssetsHSN(requestId, homeSerialNumber);
     }
 }
