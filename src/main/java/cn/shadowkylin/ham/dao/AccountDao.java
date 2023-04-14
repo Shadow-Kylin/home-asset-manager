@@ -53,4 +53,8 @@ public interface AccountDao {
     void disbandHome(String homeSerialNumber);
 
     String getHSNByUserId(int userId);
+
+    String getUserName(int userId);
+
+    String getUserPhone(int userId);
 }

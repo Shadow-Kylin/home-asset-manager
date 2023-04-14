@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Date;
-import java.util.UUID;
 
 /**
  * @创建人 li cong
@@ -19,6 +18,7 @@ public class HomeService {
     private HomeDao homeDao;
 
     public boolean isHomeExist(String homeSerialNumber) {
+        //返回结果不为null，说明家庭已存在，返回true
         return homeDao.isHomeExist(homeSerialNumber)!=null;
     }
 
@@ -35,6 +35,10 @@ public class HomeService {
     }
 
     public boolean isHomeCreator(String homeSerialNumber, int userId) {
-        return homeDao.isHomeCreator(homeSerialNumber, userId) != null;
+        return homeDao.isHomeCreator(homeSerialNumber, userId)!=null;
+    }
+
+    public String getHomeName(String homeSerialNumber) {
+        return homeDao.getHomeName(homeSerialNumber);
     }
 }

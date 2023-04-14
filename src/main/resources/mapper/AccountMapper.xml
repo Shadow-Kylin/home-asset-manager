@@ -38,7 +38,7 @@
     </delete>
     <update id="removeUserFromHome">
         UPDATE user
-        SET home_serial_number = ''
+        SET home_serial_number = null
         WHERE id = #{removeId}
     </update>
     <select id="userHasJoinedHome" resultType="String">
@@ -58,6 +58,16 @@
     </update>
     <select id="getHSNByUserId" resultType="String">
         SELECT home_serial_number
+        FROM user
+        WHERE id = #{userId}
+    </select>
+    <select id="getUserName" resultType="String">
+        SELECT username
+        FROM user
+        WHERE id = #{userId}
+    </select>
+    <select id="getUserPhone" resultType="String">
+        SELECT phone
         FROM user
         WHERE id = #{userId}
     </select>

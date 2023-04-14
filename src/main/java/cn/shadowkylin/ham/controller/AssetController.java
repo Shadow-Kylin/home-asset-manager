@@ -68,6 +68,8 @@ public class AssetController {
             searchType = "assetType";
             searchValue = "6,7,8,9,10";
         }
+        //获取用户家庭序列号
+        //homeSerialNumber = accountService.getHSNByUserId(userId);
         List<Asset> assetList = assetService.getAssetList(userId, homeSerialNumber, searchType, searchValue);
         //将Asset的asset_type_id转换为asset_type_name，user_id转换为user_name
         for (Asset asset : assetList) {

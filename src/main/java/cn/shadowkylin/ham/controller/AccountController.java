@@ -1,8 +1,10 @@
 package cn.shadowkylin.ham.controller;
 
+import cn.shadowkylin.ham.common.HttpStatus;
 import cn.shadowkylin.ham.common.ResultUtil;
 import cn.shadowkylin.ham.model.User;
 import cn.shadowkylin.ham.service.*;
+import org.apache.http.protocol.HTTP;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -46,9 +48,10 @@ public class AccountController {
      */
     @GetMapping("/getAccountDetail/{id}")
     public ResultUtil<Object> getAccountDetail(@PathVariable("id") int id) {
-        //调用service层的方法，获取账户详情
-        User accountDetail = accountService.getAccountDetail(id);
-        return ResultUtil.success("获取账户详情成功", accountDetail);
+        User user = accountService.getAccountDetail(id);
+        //根据家庭序列号获取家庭名称
+        user.setHomeName(homeService.getHomeName(user.getHomeSerialNumber()));
+        return ResultUtil.success("获取账户详情成功", user);
     }
 
     /**
@@ -112,28 +115,6 @@ public class AccountController {
     }
 
     /**
-     * 创建家庭
-     */
-    @PostMapping("/createHome/{requestId}")
-    public ResultUtil<Object> createHome(@PathVariable("requestId") int requestId, String homeName) {
-        //获取请求者的家庭序列号，判断该序列号是否为空，若不为空，则已经创建过家庭，无法再次创建
-        if (homeService.getHSNByUserId(requestId).equals(null)) {
-            return ResultUtil.error("您已创建过家庭，无法再次创建！");
-        }
-        //获取当前时间，作为家庭创建时间
-        Date createdDate = new Date(System.currentTimeMillis());
-        //调用service层的方法，创建家庭
-        String homeSerialNumber = UUID.randomUUID().toString();
-        homeService.createHome(requestId, homeName,homeSerialNumber, createdDate);
-        //将请求者的家庭序列号更新为创建的家庭序列号
-        accountService.updateUserHSN(requestId, homeSerialNumber);
-        //将请求者的资产和财务的家庭序列号更新为创建的家庭序列号
-        assetService.updateAssetsHSN(requestId, homeSerialNumber);
-        financeService.updateFinanceHSN(requestId, homeSerialNumber);
-        return ResultUtil.success("创建家庭成功！");
-    }
-
-    /**
      * 将用户从家庭中移除
      */
     @PostMapping("/removeUserFromHome")
@@ -149,10 +130,12 @@ public class AccountController {
         //获取被移除者的家庭序列号，判断该序列号是否与请求者的家庭序列号相同，若不同，则无权移除
         String removeHomeSerialNumber = accountService.getHSNByUserId(removeId);
         if (!homeSerialNumber.equals(removeHomeSerialNumber)) {
-            return ResultUtil.error("该用户不在您的家庭中，无法移除！");
+            return ResultUtil.error("该用户不在您的家庭中，无法移除！", HttpStatus.UNAUTHORIZED);
         }
         //调用service层的方法，将用户从家庭中移除，即将其家庭序列号置空
         accountService.removeUserFromHome(removeId);
+        //设置请求状态码为3，表示被移除
+        homeRequestService.setRequestStatus(homeSerialNumber, removeId,3);
         return ResultUtil.success("移除成功！");
     }
 

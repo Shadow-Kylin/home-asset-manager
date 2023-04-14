@@ -17,7 +17,9 @@ import java.util.List;
 public class HomeRequestService {
     @Resource
     private HomeRequestDao homeRequestDao;
+
     public void agreeJoinHome(String homeSerialNumber, int joinId) {
+        //改变请求状态为1
         homeRequestDao.agreeJoinHome(homeSerialNumber, joinId);
     }
 
@@ -25,15 +27,36 @@ public class HomeRequestService {
         homeRequestDao.refuseJoinHome(homeSerialNumber, joinId);
     }
 
-    public List<HomeRequest> getHomeRequestList(String homeSerialNumber) {
-        return homeRequestDao.getHomeRequestList(homeSerialNumber);
+    public List<HomeRequest> getHomeRequestList(int userId) {
+        return homeRequestDao.getHomeRequestList(userId);
     }
 
     public boolean isRequestExist(int userId, String homeSerialNumber) {
+        System.out.println(homeRequestDao.isRequestExist(userId, homeSerialNumber)!=null);
         return homeRequestDao.isRequestExist(userId, homeSerialNumber) != null;
     }
 
     public void joinHome(int userId, int creatorId, String homeSerialNumber, Date createdDate) {
-        homeRequestDao.joinHome(userId, creatorId, homeSerialNumber,createdDate);
+        homeRequestDao.joinHome(userId, creatorId, homeSerialNumber, createdDate);
+    }
+
+    public List<HomeRequest> getUnhandledRequestList(int userId) {
+        return homeRequestDao.getUnhandledRequestList(userId);
+    }
+
+    public List<HomeRequest> getHandledRequestList(int userId) {
+        return homeRequestDao.getHandledRequestList(userId);
+    }
+
+    public boolean hasRequest(int userId) {
+        return homeRequestDao.getHomeRequestList(userId) != null;
+    }
+
+    public void setRequestStatus(String homeSerialNumber, int application_id, int status) {
+        homeRequestDao.setRequestStatus(homeSerialNumber, application_id, status);
+    }
+
+    public boolean hasActiveRequest(int userId) {
+        return homeRequestDao.getActiveRequest(userId) != null;
     }
 }

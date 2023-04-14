@@ -8,16 +8,21 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * @创建人 li cong
  * @创建时间 2023/3/28
  * @描述 阿里云短信工具类
  */
+@Component
 public class ALYSmsUtil {
     //accessKeyId和accessKeySecret
-    private static final String ACCESS_KEY_ID = "LTAI5tSqWoq7spSN1XzxowWd";
-    private static final String ACCESS_KEY_SECRET = "C3C9zNp2lpSGHyYn0lrBS1qWurrmgX";
+    //获取环境变量
+    private static final String ACCESS_KEY_ID = System.getenv("ACCESS_KEY_ID");
+    private static final String ACCESS_KEY_SECRET = System.getenv("ACCESS_KEY_SECRET");
+
     private static final String SIGN_NAME = "家庭资产管家";
     private static final String TEMPLATE_CODE = "SMS_275015560";
 
@@ -52,8 +57,10 @@ public class ALYSmsUtil {
             }
         } catch (ServerException e) {
             e.printStackTrace();
+            return "false";
         } catch (ClientException e) {
             e.printStackTrace();
+            return "false";
         }
         return "OK";
     }

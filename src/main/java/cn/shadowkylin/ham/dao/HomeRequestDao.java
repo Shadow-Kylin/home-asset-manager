@@ -17,9 +17,17 @@ public interface HomeRequestDao {
 
     void refuseJoinHome(String homeSerialNumber, int joinId);
 
-    List<HomeRequest> getHomeRequestList(String homeSerialNumber);
+    List<HomeRequest> getHomeRequestList(int userId);
 
     HomeRequest isRequestExist(int userId, String homeSerialNumber);
 
     void joinHome(int userId, int creatorId, String homeSerialNumber, Date createdDate);
+
+    List<HomeRequest> getUnhandledRequestList(int userId);
+
+    List<HomeRequest> getHandledRequestList(int userId);
+
+    void setRequestStatus(String homeSerialNumber, int applicationId, int status);
+
+    HomeRequest getActiveRequest(int userId);
 }

@@ -5,7 +5,7 @@
         UPDATE home_request
         SET status = 1
         WHERE home_serial_number = #{homeSerialNumber}
-        AND join_id = #{joinId}
+        AND application_id = #{joinId}
     </update>
     <update id="refuseJoinHome">
         UPDATE home_request
@@ -16,7 +16,7 @@
     <select id="getHomeRequestList" resultType="HomeRequest">
         SELECT *
         FROM home_request
-        WHERE home_serial_number = #{homeSerialNumber}
+        WHERE application_id = #{userId}
     </select>
     <select id="isRequestExist" resultType="HomeRequest">
         SELECT *
@@ -25,7 +25,31 @@
         AND application_id = #{userId}
     </select>
     <insert id="joinHome">
-        INSERT INTO home_request (home_serial_number, application_id, creator_id, status,create_date)
-        VALUES (#{homeSerialNumber}, #{userId}, #{recipient_id}, 0, #{createDate})
+        INSERT INTO home_request (home_serial_number, application_id, recipient_id, status,created_date)
+        VALUES (#{homeSerialNumber}, #{userId}, #{creatorId}, 0, #{createdDate})
     </insert>
+    <select id="getUnhandledRequestList" resultType="HomeRequest">
+        SELECT *
+        FROM home_request
+        WHERE recipient_id = #{userId}
+        AND status = 0
+    </select>
+    <select id="getHandledRequestList" resultType="HomeRequest">
+        SELECT *
+        FROM home_request
+        WHERE recipient_id = #{userId}
+        AND status != 0
+    </select>
+    <update id="setRequestStatus">
+        UPDATE home_request
+        SET status = #{status}
+        WHERE home_serial_number = #{homeSerialNumber}
+        AND application_id = #{applicationId}
+    </update>
+    <select id="getActiveRequest" resultType="HomeRequest">
+        SELECT *
+        FROM home_request
+        WHERE application_id = #{userId}
+        AND status = 0
+    </select>
 </mapper>

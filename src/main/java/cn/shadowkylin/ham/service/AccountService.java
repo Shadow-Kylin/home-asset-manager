@@ -89,4 +89,12 @@ public class AccountService {
     public String getHSNByUserId(int userId) {
         return accountDao.getHSNByUserId(userId);
     }
+
+    public String getUserName(int userId) {
+        return accountDao.getUserName(userId);
+    }
+
+    public String getUserPhone(int userId) {
+        return accountDao.getUserPhone(userId);
+    }
 }

@@ -58,5 +58,5 @@ public interface FinanceDao {
      */
     List<Finance> getExpenditureByYear(int userId,String homeSerialNumber, int year);
 
-    void updateFinanceHSN(int requestId, String homeSerialNumber);
+    void updateFinancesHSN(int requestId, String homeSerialNumber);
 }

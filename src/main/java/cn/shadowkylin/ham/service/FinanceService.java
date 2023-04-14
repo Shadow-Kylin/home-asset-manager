@@ -92,7 +92,7 @@ public class FinanceService {
         return expenditureList;
     }
 
-    public void updateFinanceHSN(int requestId, String homeSerialNumber) {
-        financeDao.updateFinanceHSN(requestId, homeSerialNumber);
+    public void updateFinancesHSN(int requestId, String homeSerialNumber) {
+        financeDao.updateFinancesHSN(requestId, homeSerialNumber);
     }
 }

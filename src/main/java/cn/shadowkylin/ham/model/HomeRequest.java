@@ -12,6 +12,8 @@ public class HomeRequest {
     private int applicationId;
     //请求者用户名
     private String applicationName;
+    //请求者手机号
+    private String applicationPhone;
     //被请求者ID
     private int recipientId;
     //被请求者用户名
@@ -24,6 +26,14 @@ public class HomeRequest {
     private String createdDate;
     //备注
     private String notes;
+
+    public String getApplicationPhone() {
+        return applicationPhone;
+    }
+
+    public void setApplicationPhone(String applicationPhone) {
+        this.applicationPhone = applicationPhone;
+    }
 
     public int getId() {
         return id;

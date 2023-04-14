@@ -117,7 +117,7 @@ public class AuthController {
         String code = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
         System.out.println(code);
         //发送短信验证码
-        //String ResultUtil = ALYSmsUtil.sendSms(user.getPhone(), code);
+        String result = ALYSmsUtil.sendSms(phone, code);
 
         //阿里云发送短信手机号不存在错误
         //if(ResultUtil.equals("isv.MOBILE_NUMBER_ILLEGAL")){
@@ -130,13 +130,16 @@ public class AuthController {
         //System.out.println(map.get("statusMsg"));
         //return ResultUtil.success(null, ResultUtil);
 
-        //if(ResultUtil.equals("OK")){
+        //if(result.equals("OK")){
         //    //将验证码存入redis
-        //    redisUtil.set("code-" + user.getPhone(), code, 60 * 5);
+        //    if (redisUtil.hasKey("code-" + phone)) {
+        //        redisUtil.del("code-" + phone);
+        //    }
+        //    redisUtil.set("code-" + phone, code, 60 * 30);
         //    return ResultUtil.success("发送成功！");
         //}
         //else
-        //    return ResultUtil.error(ResultUtil);
+        //    return ResultUtil.error(result);
 
         //测试用下面语句，发送次数有限
         //redis设置相同键的值会覆盖，但是过期时间不会覆盖，会叠加，所以要先删除，再设置

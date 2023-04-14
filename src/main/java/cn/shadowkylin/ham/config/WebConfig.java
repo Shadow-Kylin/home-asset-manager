@@ -1,14 +1,11 @@
 package cn.shadowkylin.ham.config;
 
 import cn.shadowkylin.ham.common.TokenInterceptor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.apache.http.HttpRequestInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.gson.*;
+import com.google.gson.internal.bind.util.ISO8601Utils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,6 +23,7 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     @Resource
     private TokenInterceptor tokenInterceptor;
+
     /**
      * 请求拦截器
      */
@@ -34,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         //注册拦截器
         InterceptorRegistration registration = registry.addInterceptor(tokenInterceptor);
         //拦截路径
-        registration.addPathPatterns("/**").excludePathPatterns("/auth/login","/auth/register","/auth/sendSms");
+        registration.addPathPatterns("/**").excludePathPatterns("/auth/login", "/auth/register", "/auth/sendSms");
     }
 
     /**
@@ -45,7 +43,11 @@ public class WebConfig implements WebMvcConfigurer {
         //清除默认的转换器
         converters.clear();
         //添加gson转换器，不去除null值
-        Gson gson = new GsonBuilder().serializeNulls().create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.serializeNulls();
+        //使用统一日期格式
+        gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss");
+        Gson gson = gsonBuilder.create();
         GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter(gson);
         converters.add(gsonConverter);
     }
