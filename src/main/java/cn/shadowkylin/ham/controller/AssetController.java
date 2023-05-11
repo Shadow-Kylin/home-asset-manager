@@ -5,10 +5,11 @@ import cn.shadowkylin.ham.model.Asset;
 import cn.shadowkylin.ham.service.AccountService;
 import cn.shadowkylin.ham.service.AssetService;
 import cn.shadowkylin.ham.service.AssetTypeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -173,11 +174,13 @@ public class AssetController {
                 currentValueMap.put(asset.getAssetTypeName(), asset.getCurrentValue());
             }
         }
-        JsonArray jsonArray = new JsonArray();
-        for(Map.Entry<String, Double> entry : currentValueMap.entrySet()) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("name", entry.getKey());
-            jsonObject.addProperty("value", entry.getValue());
+        //将统计结果转换为JSONArray
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode jsonArray = mapper.createArrayNode();
+        for (Map.Entry<String, Double> entry : currentValueMap.entrySet()) {
+            ObjectNode jsonObject = mapper.createObjectNode();
+            jsonObject.put("name", entry.getKey());
+            jsonObject.put("value", entry.getValue());
             jsonArray.add(jsonObject);
         }
         return ResultUtil.success("统计用户或者家庭每种固定类型资产的价值成功", jsonArray);
@@ -208,11 +211,13 @@ public class AssetController {
                 currentValueMap.put(asset.getAssetTypeName(), asset.getCurrentValue());
             }
         }
-        JsonArray jsonArray = new JsonArray();
-        for(Map.Entry<String, Double> entry : currentValueMap.entrySet()) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("name", entry.getKey());
-            jsonObject.addProperty("value", entry.getValue());
+        //将统计结果转换为JSONArray
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode jsonArray = mapper.createArrayNode();
+        for (Map.Entry<String, Double> entry : currentValueMap.entrySet()) {
+            ObjectNode jsonObject = mapper.createObjectNode();
+            jsonObject.put("name", entry.getKey());
+            jsonObject.put("value", entry.getValue());
             jsonArray.add(jsonObject);
         }
         return ResultUtil.success("统计用户或者家庭每种流动类型资产的价值成功", jsonArray);

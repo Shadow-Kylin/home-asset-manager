@@ -39,15 +39,15 @@
         WHERE id = #{financeId}
     </select>
     <insert id="addFinance">
-        INSERT INTO finance (user_id, name, asset_serial_number, created_date, type, amount, notes)
-        VALUES (#{userId}, #{name}, #{assetSerialNumber}, #{createdDate}, #{type}, #{amount}, #{notes})
+        INSERT INTO finance (user_id, name, asset_serial_number, created_date, type, amount, notes, home_serial_number)
+        VALUES (#{userId}, #{name}, #{assetSerialNumber}, #{createdDate}, #{type}, #{amount}, #{notes}, #{homeSerialNumber})
     </insert>
     <insert id="addFinanceList">
-        INSERT INTO finance (user_id, name, asset_serial_number, created_date, type, amount, notes)
+        INSERT INTO finance (user_id, name, asset_serial_number, created_date, type, amount, notes, home_serial_number
         VALUES
         <foreach collection="financeList" item="finance" separator=",">
             (#{finance.userId}, #{finance.name}, #{finance.assetSerialNumber}, #{finance.createdDate}, #{finance.type},
-            #{finance.amount}, #{finance.notes})
+            #{finance.amount}, #{finance.notes}, #{finance.homeSerialNumber})
         </foreach>
     </insert>
     <update id="updateFinance">

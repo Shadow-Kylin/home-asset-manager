@@ -51,4 +51,8 @@ public class AuthService {
     public String getPassword(int userId) {
         return authDao.getPassword(userId);
     }
+
+    public void updatePasswordByPhone(String phone, String password) {
+        authDao.updatePasswordByPhone(phone, password);
+    }
 }

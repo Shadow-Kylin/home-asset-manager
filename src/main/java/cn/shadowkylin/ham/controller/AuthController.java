@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,8 +40,10 @@ public class AuthController {
         }
         //生成token
         String token = jwtTokenUtil.genToken(user1);
-        //保存token到redis
-        redisUtil.set("token-" + user1.getId(), token, 30 * 60);
+        //将用户ID、角色封装到redis中
+        if(redisUtil.hasKey("token-" + user1.getId()))
+            redisUtil.del("token-" + user1.getId());
+        redisUtil.set("token-" + user1.getId(), token,60*30);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         //将用户除密码以外的信息返回给前端
@@ -69,8 +72,10 @@ public class AuthController {
         if (!code.equals(code1)) {
             return ResultUtil.error("验证码错误！", null, HttpStatus.CODE_ERROR);
         }
+        //设置注册时间为当前时间
+        user.setCreatedDate(new Date(System.currentTimeMillis()));
         //注册
-        //authService.register(user);
+        authService.register(user);
         return ResultUtil.success("注册成功！");
     }
 
@@ -108,20 +113,20 @@ public class AuthController {
      * 发送短信验证码
      */
     @PostMapping("/sendSms")
-    public ResultUtil<Object> sendSms(@RequestParam String phone) {
+    public ResultUtil<Object> sendSms(@RequestParam("phone") String phone) {
         //判断手机号是否已经注册
-        if (authService.isExist(phone)) {
-            return ResultUtil.error("该手机号已经注册！", HttpStatus.PHONE_EXIST);
-        }
+        //if (authService.isExist(phone)) {
+        //    return ResultUtil.success("该手机号已经注册！",null, HttpStatus.PHONE_EXIST);
+        //}
         //产生随机六位数验证码
         String code = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
         System.out.println(code);
-        //发送短信验证码
-        String result = ALYSmsUtil.sendSms(phone, code);
+        //发送阿里云短信验证码
+        //String result = ALYSmsUtil.sendSms(phone, code);
 
         //阿里云发送短信手机号不存在错误
         //if(ResultUtil.equals("isv.MOBILE_NUMBER_ILLEGAL")){
-        //    return ResultUtil.error("手机号不存在！", HttpStatus.PHONE_NOT_EXIST);
+        //    return ResultUtil.error("手机号不存在！",null, HttpStatus.PHONE_NOT_EXIST);
         //}
 
         //序列化，使用容联云时使用
@@ -157,5 +162,42 @@ public class AuthController {
     public ResultUtil<Object> isLogin() {
         // 请求之前会拦截，故此处不需重新判断
         return ResultUtil.success("已登录！");
+    }
+
+    /**
+     * 验证手机号是否已经注册
+     */
+    @GetMapping("/isExist")
+    public ResultUtil<Object> isExist(@RequestParam String phone) {
+        if (authService.isExist(phone)) {
+            return ResultUtil.error("该手机号已经注册！", null, HttpStatus.PHONE_EXIST);
+        }
+        return ResultUtil.success("该手机号未注册！");
+    }
+    /**
+     * 检查验证码是否正确
+     */
+    @GetMapping("/checkSms")
+    public ResultUtil<Object> checkSms(@RequestParam("phone") String phone, @RequestParam("code") String code) {
+        String code1 = (String) redisUtil.get("code-" + phone);
+        if (StringUtils.isBlank(code1)) {
+            return ResultUtil.error("验证码已过期！", null, HttpStatus.CODE_EXPIRED);
+        }
+        if (!code.equals(code1)) {
+            return ResultUtil.error("验证码错误！", null, HttpStatus.CODE_ERROR);
+        }
+        return ResultUtil.success("验证码正确！");
+    }
+    /**
+     * 忘记密码修改密码
+     */
+    @PostMapping("/forgetPassword")
+    public ResultUtil<Object> forgetPassword(@RequestParam("phone") String phone, @RequestParam("password") String password) {
+        //判断手机号是否已经注册
+        if (!authService.isExist(phone)) {
+            return ResultUtil.error("该手机号未注册！", null, HttpStatus.PHONE_NOT_EXIST);
+        }
+        authService.updatePasswordByPhone(phone, password);
+        return ResultUtil.success("修改密码成功！");
     }
 }

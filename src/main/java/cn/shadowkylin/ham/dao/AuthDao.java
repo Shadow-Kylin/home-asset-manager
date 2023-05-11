@@ -34,4 +34,6 @@ public interface AuthDao {
     void updatePassword(int userId, String newPwd);
 
     String getPassword(int userId);
+
+    void updatePasswordByPhone(String phone, String password);
 }

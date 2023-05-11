@@ -32,7 +32,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
             if (jwtTokenUtil.isTokenExpired(token)) {
-                responseJson(response, ResultUtil.error("登录超时，请重新登录！", null, HttpStatus.LOGIN_EXPIRE));
+                responseJson(response, ResultUtil.error("登录超时，请重新登录", null, HttpStatus.LOGIN_EXPIRE));
                 return false;
             }
             int userId = jwtTokenUtil.getUserIdFromToken(token);

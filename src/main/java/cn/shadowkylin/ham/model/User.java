@@ -24,6 +24,16 @@ public class User {
     private String homeSerialNumber;
     //家庭名称
     private String homeName;
+    //角色
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getHomeName() {
         return homeName;

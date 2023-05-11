@@ -6,6 +6,7 @@
         SET status = 1
         WHERE home_serial_number = #{homeSerialNumber}
         AND application_id = #{joinId}
+        AND status = 0
     </update>
     <update id="refuseJoinHome">
         UPDATE home_request

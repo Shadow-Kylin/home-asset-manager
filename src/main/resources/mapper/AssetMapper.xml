@@ -63,17 +63,18 @@
         WHERE id = #{asset_id}
     </select>
     <insert id="addAsset" parameterType="Asset">
-        INSERT INTO asset (asset_type_id,user_id,asset_serial_number, name, purchase_date, purchase_price, current_value, notes)
+        INSERT INTO asset (asset_type_id,user_id,asset_serial_number, name, purchase_date, purchase_price,
+                           current_value, notes, home_serial_number)
         VALUES (#{assetTypeId},#{userId},#{assetSerialNumber}, #{name}, #{purchaseDate}, #{purchasePrice}, #{currentValue},
-                #{notes})
+                #{notes},#{homeSerialNumber})
     </insert>
     <insert id="addAssetList" parameterType="List">
         INSERT INTO asset (asset_type_id,user_id,asset_serial_number, name, purchase_date, purchase_price,
-        current_value, notes)
+        current_value, notes, home_serial_number)
         VALUES
         <foreach collection="assetList" item="asset" separator=",">
             (#{asset.assetTypeId},#{asset.userId},#{asset.assetSerialNumber}, #{asset.name}, #{asset.purchaseDate},
-            #{asset.purchasePrice}, #{asset.currentValue},#{asset.notes})
+            #{asset.purchasePrice}, #{asset.currentValue},#{asset.notes},#{asset.homeSerialNumber})
         </foreach>
     </insert>
     <update id="updateAsset">
