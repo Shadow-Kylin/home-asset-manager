@@ -40,5 +40,5 @@ public interface AssetTypeDao {
      * @param name
      * @return
      */
-    int getAssetTypeId(String name);
+    Object getAssetTypeId(String name);
 }

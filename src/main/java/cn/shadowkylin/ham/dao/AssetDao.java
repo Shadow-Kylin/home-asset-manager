@@ -15,7 +15,7 @@ public interface AssetDao {
     /**
      * 获取资产列表
      */
-    List<Asset> getAssetList(int userId, String homeSerialNumber, String searchType, String searchValue);
+    List<Asset> getAssetList(int userId, String homeSerialNumber, String searchType, String searchValue,String types);
 
     /**
      * 获取资产详情

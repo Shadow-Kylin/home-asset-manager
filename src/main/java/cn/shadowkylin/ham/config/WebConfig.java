@@ -2,11 +2,14 @@ package cn.shadowkylin.ham.config;
 
 import cn.shadowkylin.ham.common.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * @创建人 li cong
@@ -29,6 +32,20 @@ public class WebConfig implements WebMvcConfigurer {
         //拦截路径
         registration.addPathPatterns("/**").excludePathPatterns("/auth/login", "/auth/register", "/auth/sendSms"
         ,"/auth/isExist","/auth/checkSms","/auth/forgetPassword");
+    }
+
+    /**
+     * 跨域请求配置
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        //允许跨域的路径
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                //允许跨域的方法
+                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS","HEAD","PATCH")
+                //允许跨域的请求头
+                .allowedHeaders("*");
     }
 
     /**

@@ -49,6 +49,7 @@ public class AssetTypeService {
     }
 
     public int getAssetTypeId(String name) {
-        return assetTypeDao.getAssetTypeId(name);
+        //等于null就返回0，否则将Object类型转换为int类型
+        return assetTypeDao.getAssetTypeId(name) == null ? 0 : (int) assetTypeDao.getAssetTypeId(name);
     }
 }

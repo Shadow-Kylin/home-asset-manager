@@ -5,4 +5,17 @@
         SELECT *
         FROM notice
     </select>
+    <insert id="addNotice" parameterType="Notice">
+        INSERT INTO notice (content, create_time)
+        VALUES ( #{content}, #{createdDate})
+    </insert>
+    <update id="updateNotice" parameterType="Notice">
+        UPDATE notice
+        SET content = #{content}, created_date = #{createdDate}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteNotice" parameterType="int">
+        DELETE FROM notice
+        WHERE id = #{noticeId}
+    </delete>
 </mapper>

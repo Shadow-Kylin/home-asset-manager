@@ -3,34 +3,40 @@
 <mapper namespace="cn.shadowkylin.ham.dao.AssetDao">
     <select id="getAssetList" resultType="Asset">
         SELECT *
+        FROM (
+        SELECT *
         FROM asset
+        WHERE asset_type_id IN (
+        <foreach collection="types.split(',')" item="assetType" separator=",">
+            #{assetType}
+        </foreach>
+        )
+        ) asset_alias
         WHERE
         <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
-            user_id = #{userId}
+            asset_alias.user_id = #{userId}
         </if>
         <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
-            home_serial_number = #{homeSerialNumber}
+            asset_alias.home_serial_number = #{homeSerialNumber}
         </if>
         <if test="searchType == 'name'">
-            AND name LIKE CONCAT('%',#{searchValue},'%')
+            AND asset_alias.name LIKE CONCAT('%',#{searchValue},'%')
         </if>
         <if test="searchType == 'assetType'">
-            AND asset_type_id in
-            <foreach collection="searchValue.split(',')" item="assetType" open="(" separator="," close=")">
-                #{assetType}
-            </foreach>
+            AND asset_alias.asset_type_id = #{searchValue}
+            )
         </if>
         <if test="searchType == 'purchaseDate'">
-            AND purchase_date = #{searchValue}
+            AND asset_alias.purchase_date = #{searchValue}
         </if>
         <if test="searchType == 'purchasePrice'">
-            AND purchase_price = #{searchValue}
+            AND asset_alias.purchase_price = #{searchValue}
         </if>
         <if test="searchType == 'currentValue'">
-            AND current_value = #{searchValue}
+            AND asset_alias.current_value = #{searchValue}
         </if>
         <if test="searchType == 'notes'">
-            AND notes LIKE CONCAT('%',#{searchValue},'%')
+            AND asset_alias.notes LIKE CONCAT('%',#{searchValue},'%')
         </if>
     </select>
     <select id="getFixedAsset" resultType="Asset">

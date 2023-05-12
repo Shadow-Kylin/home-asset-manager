@@ -23,4 +23,16 @@ public class NoticeService {
     public List<Notice> getNotices() {
         return noticeDao.getNotices();
     }
+
+    public void deleteNotice(int noticeId) {
+        noticeDao.deleteNotice(noticeId);
+    }
+
+    public void addNotice(Notice notice) {
+        noticeDao.addNotice(notice);
+    }
+
+    public void updateNotice(Notice notice) {
+        noticeDao.updateNotice(notice);
+    }
 }

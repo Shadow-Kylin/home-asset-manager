@@ -131,6 +131,9 @@ public class AccountController {
         }
         //调用service层的方法，将用户从家庭中移除，即将其家庭序列号置空
         accountService.removeUserFromHome(removeId);
+        //还要将该用户的资产和财务信息中的家庭序列号置空
+        assetService.updateAssetsHSN(removeId, null);
+        financeService.updateFinancesHSN(removeId, null);
         //设置请求状态码为3，表示被移除
         homeRequestService.setRequestStatus(homeSerialNumber, removeId,3);
         return ResultUtil.success("移除成功！");

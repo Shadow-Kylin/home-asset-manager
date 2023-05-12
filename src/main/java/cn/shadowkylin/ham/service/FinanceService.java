@@ -74,7 +74,7 @@ public class FinanceService {
         double[] incomeList = new double[12];
         //统计每个月的收入之和
         for (Finance finance : financeList) {
-            incomeList[finance.getCreatedDate().getMonth()] += finance.getAmount();
+            incomeList[finance.getCreatedDate().toLocalDate().getMonthValue()] += finance.getAmount();
         }
         return incomeList;
     }
@@ -87,7 +87,7 @@ public class FinanceService {
         double[] expenditureList = new double[12];
         //统计每个月的支出之和
         for (Finance finance : financeList) {
-            expenditureList[finance.getCreatedDate().getMonth()] += finance.getAmount();
+            expenditureList[finance.getCreatedDate().toLocalDate().getMonthValue()] += finance.getAmount();
         }
         return expenditureList;
     }

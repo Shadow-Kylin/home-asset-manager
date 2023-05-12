@@ -20,8 +20,9 @@ public class AssetService {
     /**
      * 获取资产列表
      */
-    public List<Asset> getAssetList(int userId,String homeSerialNumber, String searchType, String searchValue) {
-        return assetDao.getAssetList(userId,homeSerialNumber,searchType,searchValue);
+    public List<Asset> getAssetList(int userId,String homeSerialNumber, String searchType, String searchValue,
+                                    String types) {
+        return assetDao.getAssetList(userId,homeSerialNumber,searchType,searchValue,types);
     }
     /**
      * 获取资产详情

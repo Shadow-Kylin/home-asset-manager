@@ -17,4 +17,10 @@ public interface NoticeDao {
      * 获取公告
      */
     List<Notice> getNotices();
+
+    void deleteNotice(int noticeId);
+
+    void addNotice(Notice notice);
+
+    void updateNotice(Notice notice);
 }
