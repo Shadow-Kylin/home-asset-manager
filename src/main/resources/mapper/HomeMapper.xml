@@ -35,4 +35,9 @@
         FROM home
         WHERE home_serial_number = #{homeSerialNumber}
     </select>
+    <update id="renameHome">
+        UPDATE home
+        SET name = #{homeName}
+        WHERE home_serial_number = #{homeSerialNumber}
+    </update>
 </mapper>

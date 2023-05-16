@@ -76,4 +76,8 @@ public class AssetService {
     public void updateAssetsHSN(int requestId, String homeSerialNumber) {
         assetDao.updateAssetsHSN(requestId, homeSerialNumber);
     }
+
+    public void clearHomeAsset(String homeSerialNumber) {
+        assetDao.clearHomeAsset(homeSerialNumber);
+    }
 }

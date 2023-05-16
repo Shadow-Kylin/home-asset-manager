@@ -1,10 +1,14 @@
 package cn.shadowkylin.ham.controller;
 
 import cn.shadowkylin.ham.common.ResultUtil;
+import cn.shadowkylin.ham.common.WebSocket;
+import cn.shadowkylin.ham.model.User;
 import cn.shadowkylin.ham.service.AccountService;
 import cn.shadowkylin.ham.service.AssetService;
 import cn.shadowkylin.ham.service.FinanceService;
 import cn.shadowkylin.ham.service.HomeService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +33,8 @@ public class HomeController {
     private AssetService assetService;
     @Resource
     private FinanceService financeService;
+    @Resource
+    private WebSocket webSocket;
     /**
      * 查询用户是否是家庭创建者
      */
@@ -57,6 +63,39 @@ public class HomeController {
         //将请求者的资产和财务的家庭序列号更新为创建的家庭序列号
         assetService.updateAssetsHSN(requestId, homeSerialNumber);
         financeService.updateFinancesHSN(requestId, homeSerialNumber);
+        //根据requestId获取请求者的用户详情
+        User user = accountService.getAccountDetail(requestId);
+        user.setHomeName(homeName);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //将请求者的用户详情转换为json字符串
+        String userJson = gson.toJson(user);
+        //将请求者的用户详情发送给前端
+        webSocket.sendMessageToUser(String.valueOf(requestId), userJson);
+        System.out.println("创建家庭成功！");
         return ResultUtil.success("创建家庭成功！",homeSerialNumber);
+    }
+    /**
+     * 家庭改名
+     */
+    @PostMapping("/renameHome/{requestId}")
+    public ResultUtil<Object> renameHome(@PathVariable("requestId") int requestId,
+                                         @RequestParam("homeSerialNumber") String homeSerialNumber,
+                                         @RequestParam("homeName") String homeName) {
+        //判断请求者是否是家庭创建者
+        if (!homeService.isHomeCreator(homeSerialNumber, requestId)) {
+            return ResultUtil.error("您不是家庭创建者，无法改名！");
+        }
+        //调用service层的方法，改名
+        homeService.renameHome(homeSerialNumber, homeName);
+        //根据请求者的用户id获取请求者的用户详情
+        User user = accountService.getAccountDetail(requestId);
+        user.setHomeName(homeName);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //将请求者的用户详情转换为json字符串
+        String userJson = gson.toJson(user);
+        //将请求者的用户详情发送给前端
+        webSocket.sendMessageToUser(String.valueOf(requestId), userJson);
+        System.out.println("改名成功！");
+        return ResultUtil.success("改名成功！");
     }
 }

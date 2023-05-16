@@ -26,4 +26,6 @@ public interface HomeDao {
     String getHomeName(String homeSerialNumber);
 
     int getCreatorIdByHSN(String homeSerialNumber);
+
+    void renameHome(String homeSerialNumber, String homeName);
 }

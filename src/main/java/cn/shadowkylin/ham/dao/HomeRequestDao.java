@@ -29,5 +29,7 @@ public interface HomeRequestDao {
 
     void setRequestStatus(String homeSerialNumber, int applicationId, int status);
 
-    HomeRequest getActiveRequest(int userId);
+    HomeRequest getActiveRequest(int userId,String homeSerialNumber);
+
+    HomeRequest getInactiveRequest(int userId, String homeSerialNumber);
 }

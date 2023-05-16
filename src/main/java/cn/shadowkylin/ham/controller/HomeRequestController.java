@@ -2,8 +2,12 @@ package cn.shadowkylin.ham.controller;
 
 import cn.shadowkylin.ham.common.HttpStatus;
 import cn.shadowkylin.ham.common.ResultUtil;
+import cn.shadowkylin.ham.common.WebSocket;
 import cn.shadowkylin.ham.model.HomeRequest;
+import cn.shadowkylin.ham.model.User;
 import cn.shadowkylin.ham.service.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,6 +32,8 @@ public class HomeRequestController {
     private AssetService assetService;
     @Resource
     private FinanceService financeService;
+    @Resource
+    private WebSocket webSocket;
 
     /**
      * 根据用户ID获取所有请求列表
@@ -104,7 +110,7 @@ public class HomeRequestController {
     /**
      * 同意用户加入创建者的家庭
      */
-    @PostMapping ("/agreeJoinHome")
+    @PostMapping("/agreeJoinHome")
     public ResultUtil<Object> agreeJoinHome(@RequestParam("requestId") int requestId,
                                             @RequestParam("joinId") int joinId) {
         //获取用户所在的家庭，判断其是否是家庭创建者
@@ -126,6 +132,14 @@ public class HomeRequestController {
         //将用户的资产和财务的家庭序列号设置为创建者的家庭序列号
         assetService.updateAssetsHSN(joinId, homeSerialNumber);
         financeService.updateFinancesHSN(joinId, homeSerialNumber);
+        //根据removeId获取用户详情
+        User user = accountService.getAccountDetail(joinId);
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
+        webSocket.sendMessageToUser(String.valueOf(joinId), userJson);
+        System.out.println("同意用户加入家庭成功！");
         return ResultUtil.success("同意用户加入家庭成功！");
     }
 
@@ -144,6 +158,14 @@ public class HomeRequestController {
         }
         //拒绝用户加入家庭，即设置status为2
         homeRequestService.refuseJoinHome(homeSerialNumber, joinId);
+        //根据removeId获取用户详情
+        User user = accountService.getAccountDetail(joinId);
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
+        webSocket.sendMessageToUser(String.valueOf(joinId), userJson);
+        System.out.println("拒绝用户加入家庭成功！");
         return ResultUtil.success("拒绝用户加入家庭成功！");
     }
 
@@ -153,11 +175,11 @@ public class HomeRequestController {
     @PostMapping("/joinHome/{userId}")
     public ResultUtil<Object> joinHome(@PathVariable("userId") int userId,
                                        @RequestParam("homeSerialNumber") String homeSerialNumber) {
-        //判断该用户是否已经在家庭中以及是否已经发起过申请并且没有被处理，只能申请一次，除非撤回或者被拒绝
+        //用户不能重复申请加入该家庭
         if (accountService.getHSNByUserId(userId) != null ||
-                homeRequestService.hasActiveRequest(userId)) {
-            //违法操作，该用户已经在家庭中或是否已经申请加入该家庭
-            return ResultUtil.error("该用户已经在家庭中或已经发起过请求！", null, HttpStatus.ILLEGAL_OPERATION);
+                homeRequestService.hasActiveRequest(userId, homeSerialNumber)) {
+            //违法操作，该用户已经申请加入该家庭
+            return ResultUtil.error("该用户已经发起过请求！", null, HttpStatus.ILLEGAL_OPERATION);
         }
         //判断该家庭是否存在
         if (!homeService.isHomeExist(homeSerialNumber)) {
@@ -165,6 +187,22 @@ public class HomeRequestController {
         }
         //获取该家庭的创建者ID
         int creatorId = homeService.getCreatorIdByHSN(homeSerialNumber);
+        //根据creatorId获取创建者的用户
+        User user = accountService.getAccountDetail(creatorId);
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向创建者发送userJson
+        webSocket.sendMessageToUser(String.valueOf(creatorId), userJson);
+        System.out.println("申请加入家庭成功！");
+
+        //用户曾申请加入该家庭但被拒绝，更新该请求的状态为0
+        if (homeRequestService.hasInactiveRequest(userId, homeSerialNumber)) {
+            System.out.println("用户曾申请加入该家庭但被拒绝，更新该请求的状态为0");
+            homeRequestService.setRequestStatus(homeSerialNumber, userId, 0);
+            return ResultUtil.success("申请加入家庭成功！");
+        }
+
         //获取当前系统的日期
         Date date = new Date(System.currentTimeMillis());
         //申请加入家庭

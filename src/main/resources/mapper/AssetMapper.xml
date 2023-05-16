@@ -24,7 +24,6 @@
         </if>
         <if test="searchType == 'assetType'">
             AND asset_alias.asset_type_id = #{searchValue}
-            )
         </if>
         <if test="searchType == 'purchaseDate'">
             AND asset_alias.purchase_date = #{searchValue}
@@ -123,5 +122,10 @@
         UPDATE asset
         SET home_serial_number = #{homeSerialNumber}
         WHERE user_id = #{requestId}
+    </update>
+    <update id="clearHomeAsset">
+        UPDATE asset
+        SET home_serial_number = null
+        WHERE home_serial_number = #{homeSerialNumber}
     </update>
 </mapper>

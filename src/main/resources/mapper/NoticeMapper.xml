@@ -6,7 +6,7 @@
         FROM notice
     </select>
     <insert id="addNotice" parameterType="Notice">
-        INSERT INTO notice (content, create_time)
+        INSERT INTO notice (content, created_date)
         VALUES ( #{content}, #{createdDate})
     </insert>
     <update id="updateNotice" parameterType="Notice">

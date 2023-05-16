@@ -43,6 +43,7 @@ public class FinanceController {
             @RequestParam(value = "type") String type) {
         //使用PageHelper分页
         PageHelper.startPage(pageNum, pageSize);
+        System.out.println(searchValue);
         //获取财务列表
         List<Finance> financeList = financeService.getFinanceList(userId, homeSerialNumber, searchType, searchValue, type);
         //根据用户ID获取用户名称

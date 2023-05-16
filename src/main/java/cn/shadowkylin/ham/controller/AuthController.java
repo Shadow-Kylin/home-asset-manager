@@ -122,12 +122,12 @@ public class AuthController {
         String code = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
         System.out.println(code);
         //发送阿里云短信验证码
-        //String result = ALYSmsUtil.sendSms(phone, code);
+        String result = ALYSmsUtil.sendSms(phone, code);
 
         //阿里云发送短信手机号不存在错误
-        //if(ResultUtil.equals("isv.MOBILE_NUMBER_ILLEGAL")){
-        //    return ResultUtil.error("手机号不存在！",null, HttpStatus.PHONE_NOT_EXIST);
-        //}
+        if(result.equals("isv.MOBILE_NUMBER_ILLEGAL")){
+            return ResultUtil.error("手机号不存在！",null, HttpStatus.PHONE_NOT_EXIST);
+        }
 
         //序列化，使用容联云时使用
         //Gson gson = new Gson();
@@ -135,24 +135,24 @@ public class AuthController {
         //System.out.println(map.get("statusMsg"));
         //return ResultUtil.success(null, ResultUtil);
 
-        //if(result.equals("OK")){
-        //    //将验证码存入redis
-        //    if (redisUtil.hasKey("code-" + phone)) {
-        //        redisUtil.del("code-" + phone);
-        //    }
-        //    redisUtil.set("code-" + phone, code, 60 * 30);
-        //    return ResultUtil.success("发送成功！");
-        //}
-        //else
-        //    return ResultUtil.error(result);
+        if(result.equals("OK")){
+            //将验证码存入redis
+            if (redisUtil.hasKey("code-" + phone)) {
+                redisUtil.del("code-" + phone);
+            }
+            redisUtil.set("code-" + phone, code, 60 * 30);
+            return ResultUtil.success("发送成功！");
+        }
+        else
+            return ResultUtil.error(result);
 
         //测试用下面语句，发送次数有限
         //redis设置相同键的值会覆盖，但是过期时间不会覆盖，会叠加，所以要先删除，再设置
-        if (redisUtil.hasKey("code-" + phone)) {
-            redisUtil.del("code-" + phone);
-        }
-        redisUtil.set("code-" + phone, code, 60 * 30);
-        return ResultUtil.success("发送成功！");
+        //if (redisUtil.hasKey("code-" + phone)) {
+        //    redisUtil.del("code-" + phone);
+        //}
+        //redisUtil.set("code-" + phone, code, 60 * 30);
+        //return ResultUtil.success("发送成功！");
     }
 
     /**

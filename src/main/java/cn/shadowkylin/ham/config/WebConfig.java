@@ -1,8 +1,12 @@
 package cn.shadowkylin.ham.config;
 
 import cn.shadowkylin.ham.common.TokenInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.config.annotation.*;
@@ -10,6 +14,7 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @创建人 li cong
@@ -37,31 +42,17 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * 跨域请求配置
      */
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        //允许跨域的路径
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                //允许跨域的方法
-                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS","HEAD","PATCH")
-                //允许跨域的请求头
-                .allowedHeaders("*");
-    }
-
-    /**
-     * 解决gson与jackson冲突
-     */
     //@Override
-    //public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    //    //清除默认的转换器
-    //    converters.clear();
-    //    //添加gson转换器，不去除null值
-    //    GsonBuilder gsonBuilder = new GsonBuilder();
-    //    gsonBuilder.serializeNulls();
-    //    //使用统一日期格式yyyy-MM-dd HH:mm:ss
-    //    gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss");
-    //    Gson gson = gsonBuilder.create();
-    //    GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter(gson);
-    //    converters.add(gsonConverter);
+    //public void addCorsMappings(CorsRegistry registry) {
+    //    //允许跨域的路径
+    //    registry.addMapping("/**")
+    //            .allowedOrigins("*")
+    //            .allowCredentials(true)
+    //            //允许跨域的方法
+    //            .allowedMethods("GET","POST","PUT","DELETE")
+    //            //允许跨域的请求头
+    //            .allowedHeaders("*")
+    //            .maxAge(3600);
     //}
+
 }

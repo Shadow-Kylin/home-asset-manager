@@ -56,7 +56,11 @@ public class HomeRequestService {
         homeRequestDao.setRequestStatus(homeSerialNumber, application_id, status);
     }
 
-    public boolean hasActiveRequest(int userId) {
-        return homeRequestDao.getActiveRequest(userId) != null;
+    public boolean hasActiveRequest(int userId,String homeSerialNumber) {
+        return homeRequestDao.getActiveRequest(userId,homeSerialNumber) != null;
+    }
+
+    public boolean hasInactiveRequest(int userId, String homeSerialNumber) {
+        return homeRequestDao.getInactiveRequest(userId, homeSerialNumber) != null;
     }
 }

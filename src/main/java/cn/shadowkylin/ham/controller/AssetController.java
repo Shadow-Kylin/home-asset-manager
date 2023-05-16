@@ -60,10 +60,11 @@ public class AssetController {
         String types = "";
         if (searchType.equals("assetType")) {//如果搜索类型为'类型'，则将搜索值转换为对应的asset_type_id
             searchValue = String.valueOf(assetTypeService.getAssetTypeId(searchValue));
+            System.out.println(searchValue);
         }
         //如果type为fixed并且没有搜索 '类型'，则获取固定资产列表，否则获取流动资产列表，
         // 固定资产ID为1,2,3，4,5，流动资产ID为6,7,8,9,10
-        else if (type.equals("fixed")) {
+        if (type.equals("fixed")) {
             types = "1,2,3,4,5";
         } else if (type.equals("fluid")) {
             types = "6,7,8,9,10";

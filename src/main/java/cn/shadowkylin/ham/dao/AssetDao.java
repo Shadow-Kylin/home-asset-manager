@@ -57,4 +57,6 @@ public interface AssetDao {
     String checkAsset(Integer userId, String homeSerialNumber, String assetSerialNumber);
 
     void updateAssetsHSN(int requestId, String homeSerialNumber);
+
+    void clearHomeAsset(String homeSerialNumber);
 }

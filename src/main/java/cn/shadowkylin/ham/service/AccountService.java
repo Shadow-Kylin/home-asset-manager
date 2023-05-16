@@ -80,7 +80,7 @@ public class AccountService {
     }
 
     public void disbandHome(String homeSerialNumber) {
-        //将用户的家庭序列号置空
+        //将家庭成员们的家庭序列号置空
         accountDao.disbandHome(homeSerialNumber);
         //从家庭表中删除该家庭
         homeDao.deleteHome(homeSerialNumber);

@@ -95,4 +95,8 @@ public class FinanceService {
     public void updateFinancesHSN(int requestId, String homeSerialNumber) {
         financeDao.updateFinancesHSN(requestId, homeSerialNumber);
     }
+
+    public void clearHomeFinance(String homeSerialNumber) {
+        financeDao.clearHomeFinance(homeSerialNumber);
+    }
 }

@@ -41,4 +41,12 @@ public class HomeService {
     public String getHomeName(String homeSerialNumber) {
         return homeDao.getHomeName(homeSerialNumber);
     }
+
+    public void renameHome(String homeSerialNumber, String homeName) {
+        homeDao.renameHome(homeSerialNumber, homeName);
+    }
+
+    public void deleteHome(String homeSerialNumber) {
+        homeDao.deleteHome(homeSerialNumber);
+    }
 }

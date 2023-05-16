@@ -51,6 +51,14 @@
         SELECT *
         FROM home_request
         WHERE application_id = #{userId}
+        AND home_serial_number = #{homeSerialNumber}
         AND status = 0
+    </select>
+    <select id="getInactiveRequest" resultType="HomeRequest">
+        SELECT *
+        FROM home_request
+        WHERE application_id = #{userId}
+        AND home_serial_number = #{homeSerialNumber}
+        AND status != 0
     </select>
 </mapper>

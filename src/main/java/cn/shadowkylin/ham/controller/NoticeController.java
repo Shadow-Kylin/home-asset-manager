@@ -3,10 +3,7 @@ package cn.shadowkylin.ham.controller;
 import cn.shadowkylin.ham.common.ResultUtil;
 import cn.shadowkylin.ham.model.Notice;
 import cn.shadowkylin.ham.service.NoticeService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.sql.Date;
@@ -35,8 +32,8 @@ public class NoticeController {
     /**
      * 删除公告
      */
-    @GetMapping("/deleteNotice")
-    public ResultUtil<Object> deleteNotice(int noticeId) {
+    @PostMapping("/deleteNotice/{id}")
+    public ResultUtil<Object> deleteNotice(@PathVariable("id") int noticeId) {
         noticeService.deleteNotice(noticeId);
         return ResultUtil.success("删除公告成功");
     }
@@ -44,8 +41,8 @@ public class NoticeController {
     /**
      * 添加公告
      */
-    @GetMapping("/addNotice")
-    public ResultUtil<Object> addNotice(Notice notice) {
+    @PostMapping("/addNotice")
+    public ResultUtil<Object> addNotice(@RequestBody Notice notice) {
         //设置公告时间
         notice.setCreatedDate(Date.valueOf(LocalDate.now()));
         noticeService.addNotice(notice);
@@ -55,8 +52,8 @@ public class NoticeController {
     /**
      * 修改公告
      */
-    @GetMapping("/updateNotice")
-    public ResultUtil<Object> updateNotice(Notice notice) {
+    @PostMapping("/updateNotice")
+    public ResultUtil<Object> updateNotice(@RequestBody Notice notice) {
         noticeService.updateNotice(notice);
         return ResultUtil.success("修改公告成功");
     }

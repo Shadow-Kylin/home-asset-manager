@@ -17,7 +17,7 @@
         <if test="searchType == 'assetSerialNumber'">
             AND asset_serial_number LIKE CONCAT('%',#{searchValue},'%')
         </if>
-        <if test="searchType == 'date'">
+        <if test="searchType == 'createdDate'">
             AND created_date = #{searchValue}
         </if>
         <if test="searchType == 'amount'">
@@ -105,5 +105,10 @@
         UPDATE finance
         SET home_serial_number = #{homeSerialNumber}
         WHERE user_id = #{requestId}
+    </update>
+    <update id="clearHomeFinance">
+        UPDATE finance
+        SET home_serial_number = null
+        WHERE home_serial_number = #{homeSerialNumber}
     </update>
 </mapper>

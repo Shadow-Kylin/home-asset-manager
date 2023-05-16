@@ -2,8 +2,11 @@ package cn.shadowkylin.ham.controller;
 
 import cn.shadowkylin.ham.common.HttpStatus;
 import cn.shadowkylin.ham.common.ResultUtil;
+import cn.shadowkylin.ham.common.WebSocket;
 import cn.shadowkylin.ham.model.User;
 import cn.shadowkylin.ham.service.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,6 +31,8 @@ public class AccountController {
     private AssetService assetService;
     @Resource
     private FinanceService financeService;
+    @Resource
+    private WebSocket webSocket;
     /**
      * 获取账户列表
      */
@@ -64,6 +69,12 @@ public class AccountController {
         }
         //调用service层的方法，获取账户列表
         List<User> accountList = accountService.getAccountsByHSN(homeSerialNumber);
+        //获取家庭名称
+        String homeName = homeService.getHomeName(homeSerialNumber);
+        //设置家庭名称
+        for (User user : accountList) {
+            user.setHomeName(homeName);
+        }
         return ResultUtil.success("获取账户列表成功", accountList);
     }
 
@@ -136,6 +147,16 @@ public class AccountController {
         financeService.updateFinancesHSN(removeId, null);
         //设置请求状态码为3，表示被移除
         homeRequestService.setRequestStatus(homeSerialNumber, removeId,3);
+        //根据removeId获取用户详情
+        User user = accountService.getAccountDetail(removeId);
+        //根据家庭序列号获取家庭名称
+        user.setHomeName(homeService.getHomeName(user.getHomeSerialNumber()));
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
+        webSocket.sendMessageToUser(String.valueOf(removeId), userJson);
+        System.out.println("已向用户" + removeId + "发送移除通知！");
         return ResultUtil.success("移除成功！");
     }
 
@@ -167,24 +188,42 @@ public class AccountController {
         if (creatorId != userId) {
             return ResultUtil.error("您不是家庭创建者，无权解散！");
         }
+        //将家庭下的所有资产和财务记录的家庭序列号置空
+        assetService.clearHomeAsset(homeSerialNumber);
+        financeService.clearHomeFinance(homeSerialNumber);
+        //将家庭下的所有请求的状态码置为5，表示家庭已解散
+        homeRequestService.setRequestStatus(homeSerialNumber,userId, 5);
+        //根据家庭序列号获取家庭成员列表
+        List<User> homeMembers = accountService.getAccountsByHSN(homeSerialNumber);
+        //根据家庭序列号获取家庭名称
+        //调用webSocket的sendMessageToUser方法，向家庭成员发送homeMembersJson
+        for (User user : homeMembers) {
+            //使用gson将homeMembers对象转换为json字符串，允许NULL值
+            user.setHomeName(null);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            String homeMemberJson = gson.toJson(user);
+            webSocket.sendMessageToUser(String.valueOf(user.getId()), homeMemberJson);
+        }
         //调用service层的方法，解散家庭
         accountService.disbandHome(homeSerialNumber);
+        System.out.println("已向家庭成员发送解散通知！");
         return ResultUtil.success("解散成功！");
     }
 
     /**
      * 通过家庭序列号获取家庭成员列表
-     *
      * @param homeSerialNumber
      */
     @GetMapping("/getHomeMembersByHSN/{homeSerialNumber}")
     public ResultUtil<Object> getHomeMembersByHSN(@PathVariable("homeSerialNumber") String homeSerialNumber) {
         //查看home表中是否存在该家庭序列号
-        if (!homeService.isHomeExist(homeSerialNumber)) {
-            return ResultUtil.error("该家庭序列号不存在！");
-        }
+        //if (!homeService.isHomeExist(homeSerialNumber)) {
+        //    return ResultUtil.error("该家庭序列号不存在！");
+        //}
         //调用service层的方法，获取家庭成员列表
         List<User> homeMembers = accountService.getAccountsByHSN(homeSerialNumber);
+        //webSocket.sendMessageToUser("sid:1;有人获取了家庭成员列表","1");
+        //System.out.println("有人获取了家庭成员列表");
         return ResultUtil.success("获取家庭成员列表成功", homeMembers);
     }
 
@@ -199,7 +238,22 @@ public class AccountController {
             return ResultUtil.error("您还未加入家庭！");
         }
         //调用service层的方法，退出家庭
-        accountService.updateUserHSN(userId, "");
+        accountService.updateUserHSN(userId, null);
+        //将该用户的资产和财务信息中的家庭序列号置空
+        assetService.updateAssetsHSN(userId, null);
+        financeService.updateFinancesHSN(userId, null);
+        //将请求状态码置为4，表示退出
+        homeRequestService.setRequestStatus(homeSerialNumber, userId,4);
+        //根据userId获取用户详情
+        User user = accountService.getAccountDetail(userId);
+        //根据家庭序列号获取家庭名称
+        user.setHomeName(homeService.getHomeName(user.getHomeSerialNumber()));
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向家庭成员发送userJson
+        webSocket.sendMessageToUser(String.valueOf(userId), userJson);
+        System.out.println("已向用户" + userId + "发送退出通知！");
         return ResultUtil.success("退出成功！");
     }
 
