@@ -32,4 +32,6 @@ public interface HomeRequestDao {
     HomeRequest getActiveRequest(int userId,String homeSerialNumber);
 
     HomeRequest getInactiveRequest(int userId, String homeSerialNumber);
+
+    void delRequestsByHSN(String homeSerialNumber);
 }

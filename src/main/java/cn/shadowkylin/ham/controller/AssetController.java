@@ -222,4 +222,5 @@ public class AssetController {
         }
         return ResultUtil.success("统计用户或者家庭每种流动类型资产的价值成功", jsonArray);
     }
+
 }

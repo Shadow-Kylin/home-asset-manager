@@ -63,4 +63,8 @@ public class HomeRequestService {
     public boolean hasInactiveRequest(int userId, String homeSerialNumber) {
         return homeRequestDao.getInactiveRequest(userId, homeSerialNumber) != null;
     }
+
+    public void delRequestsByHSN(String homeSerialNumber) {
+        homeRequestDao.delRequestsByHSN(homeSerialNumber);
+    }
 }

@@ -63,15 +63,7 @@ public class HomeController {
         //将请求者的资产和财务的家庭序列号更新为创建的家庭序列号
         assetService.updateAssetsHSN(requestId, homeSerialNumber);
         financeService.updateFinancesHSN(requestId, homeSerialNumber);
-        //根据requestId获取请求者的用户详情
-        User user = accountService.getAccountDetail(requestId);
-        user.setHomeName(homeName);
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        //将请求者的用户详情转换为json字符串
-        String userJson = gson.toJson(user);
-        //将请求者的用户详情发送给前端
-        webSocket.sendMessageToUser(String.valueOf(requestId), userJson);
-        System.out.println("创建家庭成功！");
+        sendMsgToUser(requestId,homeSerialNumber,requestId+"已创建家庭" + homeName + "！");
         return ResultUtil.success("创建家庭成功！",homeSerialNumber);
     }
     /**
@@ -87,15 +79,21 @@ public class HomeController {
         }
         //调用service层的方法，改名
         homeService.renameHome(homeSerialNumber, homeName);
-        //根据请求者的用户id获取请求者的用户详情
-        User user = accountService.getAccountDetail(requestId);
-        user.setHomeName(homeName);
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        //将请求者的用户详情转换为json字符串
-        String userJson = gson.toJson(user);
-        //将请求者的用户详情发送给前端
-        webSocket.sendMessageToUser(String.valueOf(requestId), userJson);
-        System.out.println("改名成功！");
+        sendMsgToUser(requestId,homeSerialNumber,requestId+"的家庭名已改为" + homeName + "！");
         return ResultUtil.success("改名成功！");
+    }
+
+    private void sendMsgToUser(int userId, String homeSerialNumber,String msg) {
+        //根据removeId获取用户详情
+        User user = accountService.getAccountDetail(userId);
+        //由家庭序列号获取家庭名
+        String homeName = homeService.getHomeName(homeSerialNumber);
+        user.setHomeName(homeName);
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
+        webSocket.sendMessageToUser(String.valueOf(userId), userJson);
+        System.out.println(msg);
     }
 }

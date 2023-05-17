@@ -61,4 +61,9 @@
         AND home_serial_number = #{homeSerialNumber}
         AND status != 0
     </select>
+    <delete id="delRequestsByHSN">
+        DELETE
+        FROM home_request
+        WHERE home_serial_number = #{homeSerialNumber}
+    </delete>
 </mapper>

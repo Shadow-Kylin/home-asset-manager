@@ -132,15 +132,22 @@ public class HomeRequestController {
         //将用户的资产和财务的家庭序列号设置为创建者的家庭序列号
         assetService.updateAssetsHSN(joinId, homeSerialNumber);
         financeService.updateFinancesHSN(joinId, homeSerialNumber);
+        sendMsgToUser(joinId, homeSerialNumber,requestId+"同意用户"+joinId+"加入家庭成功！");
+        return ResultUtil.success("同意用户加入家庭成功！");
+    }
+
+    private void sendMsgToUser(int userId, String homeSerialNumber,String msg) {
         //根据removeId获取用户详情
-        User user = accountService.getAccountDetail(joinId);
+        User user = accountService.getAccountDetail(userId);
+        //由家庭序列号获取家庭名
+        String homeName = homeService.getHomeName(homeSerialNumber);
+        user.setHomeName(homeName);
         //使用gson将user对象转换为json字符串，允许NULL值
         Gson gson = new GsonBuilder().serializeNulls().create();
         String userJson = gson.toJson(user);
         //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
-        webSocket.sendMessageToUser(String.valueOf(joinId), userJson);
-        System.out.println("同意用户加入家庭成功！");
-        return ResultUtil.success("同意用户加入家庭成功！");
+        webSocket.sendMessageToUser(String.valueOf(userId), userJson);
+        System.out.println(msg);
     }
 
     /**
@@ -158,14 +165,7 @@ public class HomeRequestController {
         }
         //拒绝用户加入家庭，即设置status为2
         homeRequestService.refuseJoinHome(homeSerialNumber, joinId);
-        //根据removeId获取用户详情
-        User user = accountService.getAccountDetail(joinId);
-        //使用gson将user对象转换为json字符串，允许NULL值
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        String userJson = gson.toJson(user);
-        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
-        webSocket.sendMessageToUser(String.valueOf(joinId), userJson);
-        System.out.println("拒绝用户加入家庭成功！");
+        sendMsgToUser(joinId, homeSerialNumber,userId+"拒绝用户"+joinId+"加入家庭成功！");
         return ResultUtil.success("拒绝用户加入家庭成功！");
     }
 
@@ -187,22 +187,13 @@ public class HomeRequestController {
         }
         //获取该家庭的创建者ID
         int creatorId = homeService.getCreatorIdByHSN(homeSerialNumber);
-        //根据creatorId获取创建者的用户
-        User user = accountService.getAccountDetail(creatorId);
-        //使用gson将user对象转换为json字符串，允许NULL值
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        String userJson = gson.toJson(user);
-        //调用webSocket的sendMessageToUser方法，向创建者发送userJson
-        webSocket.sendMessageToUser(String.valueOf(creatorId), userJson);
-        System.out.println("申请加入家庭成功！");
-
+        sendMsgToUser(creatorId, homeSerialNumber,"用户"+userId+"申请加入家庭成功！");
         //用户曾申请加入该家庭但被拒绝，更新该请求的状态为0
         if (homeRequestService.hasInactiveRequest(userId, homeSerialNumber)) {
             System.out.println("用户曾申请加入该家庭但被拒绝，更新该请求的状态为0");
             homeRequestService.setRequestStatus(homeSerialNumber, userId, 0);
             return ResultUtil.success("申请加入家庭成功！");
         }
-
         //获取当前系统的日期
         Date date = new Date(System.currentTimeMillis());
         //申请加入家庭

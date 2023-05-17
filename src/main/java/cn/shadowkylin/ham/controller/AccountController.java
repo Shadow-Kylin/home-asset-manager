@@ -147,16 +147,7 @@ public class AccountController {
         financeService.updateFinancesHSN(removeId, null);
         //设置请求状态码为3，表示被移除
         homeRequestService.setRequestStatus(homeSerialNumber, removeId,3);
-        //根据removeId获取用户详情
-        User user = accountService.getAccountDetail(removeId);
-        //根据家庭序列号获取家庭名称
-        user.setHomeName(homeService.getHomeName(user.getHomeSerialNumber()));
-        //使用gson将user对象转换为json字符串，允许NULL值
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        String userJson = gson.toJson(user);
-        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
-        webSocket.sendMessageToUser(String.valueOf(removeId), userJson);
-        System.out.println("已向用户" + removeId + "发送移除通知！");
+        sendMsgToUser(removeId,"",removeId+"已被移出家庭！");
         return ResultUtil.success("移除成功！");
     }
 
@@ -191,8 +182,8 @@ public class AccountController {
         //将家庭下的所有资产和财务记录的家庭序列号置空
         assetService.clearHomeAsset(homeSerialNumber);
         financeService.clearHomeFinance(homeSerialNumber);
-        //将家庭下的所有请求的状态码置为5，表示家庭已解散
-        homeRequestService.setRequestStatus(homeSerialNumber,userId, 5);
+        //将家庭下的所有请求删除
+        homeRequestService.delRequestsByHSN(homeSerialNumber);
         //根据家庭序列号获取家庭成员列表
         List<User> homeMembers = accountService.getAccountsByHSN(homeSerialNumber);
         //根据家庭序列号获取家庭名称
@@ -200,6 +191,7 @@ public class AccountController {
         for (User user : homeMembers) {
             //使用gson将homeMembers对象转换为json字符串，允许NULL值
             user.setHomeName(null);
+            user.setHomeSerialNumber(null);
             Gson gson = new GsonBuilder().serializeNulls().create();
             String homeMemberJson = gson.toJson(user);
             webSocket.sendMessageToUser(String.valueOf(user.getId()), homeMemberJson);
@@ -233,28 +225,42 @@ public class AccountController {
     @PostMapping("/quitHome/{userId}")
     public ResultUtil<Object> quitHome(@PathVariable("userId") int userId) {
         //获取用户的家庭序列号，判断用户是否已经加入家庭
-        String homeSerialNumber = homeService.getHSNByUserId(userId);
+        String homeSerialNumber = accountService.getHSNByUserId(userId);
         if (homeSerialNumber == "") {
             return ResultUtil.error("您还未加入家庭！");
         }
-        //调用service层的方法，退出家庭
-        accountService.updateUserHSN(userId, null);
         //将该用户的资产和财务信息中的家庭序列号置空
         assetService.updateAssetsHSN(userId, null);
         financeService.updateFinancesHSN(userId, null);
         //将请求状态码置为4，表示退出
         homeRequestService.setRequestStatus(homeSerialNumber, userId,4);
-        //根据userId获取用户详情
-        User user = accountService.getAccountDetail(userId);
-        //根据家庭序列号获取家庭名称
-        user.setHomeName(homeService.getHomeName(user.getHomeSerialNumber()));
-        //使用gson将user对象转换为json字符串，允许NULL值
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        String userJson = gson.toJson(user);
-        //调用webSocket的sendMessageToUser方法，向家庭成员发送userJson
-        webSocket.sendMessageToUser(String.valueOf(userId), userJson);
-        System.out.println("已向用户" + userId + "发送退出通知！");
+        //调用service层的方法，退出家庭
+        accountService.updateUserHSN(userId, null);
+        sendMsgToUser(userId,"",userId+"已退出家庭！");
+        //根据家庭序列号获取家庭成员列表
+        List<User> homeMembers = accountService.getAccountsByHSN(homeSerialNumber);
+        //通知每个成员更新当前页面数据
+        for (User user : homeMembers) {
+            //使用gson将homeMembers对象转换为json字符串，允许NULL值
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            String homeMemberJson = gson.toJson(user);
+            webSocket.sendMessageToUser(String.valueOf(user.getId()), homeMemberJson);
+        }
+        System.out.println("已向家庭成员发送退出通知！");
         return ResultUtil.success("退出成功！");
     }
 
+    private void sendMsgToUser(int userId, String homeSerialNumber,String msg) {
+        //根据removeId获取用户详情
+        User user = accountService.getAccountDetail(userId);
+        //由家庭序列号获取家庭名
+        String homeName = homeService.getHomeName(homeSerialNumber);
+        user.setHomeName(homeName);
+        //使用gson将user对象转换为json字符串，允许NULL值
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String userJson = gson.toJson(user);
+        //调用webSocket的sendMessageToUser方法，向被移除者发送userJson
+        webSocket.sendMessageToUser(String.valueOf(userId), userJson);
+        System.out.println(msg);
+    }
 }

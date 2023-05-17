@@ -26,11 +26,6 @@ public class JwtTokenUtil {
     @Autowired
     private JwtProperties jwtProperties;
 
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
-    private Environment env;
-
     /**
      * 生成token
      *
