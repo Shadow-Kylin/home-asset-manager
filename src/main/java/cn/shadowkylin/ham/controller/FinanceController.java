@@ -6,12 +6,19 @@ import cn.shadowkylin.ham.model.Finance;
 import cn.shadowkylin.ham.service.AccountService;
 import cn.shadowkylin.ham.service.AssetService;
 import cn.shadowkylin.ham.service.FinanceService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @创建人 li cong
@@ -148,5 +155,73 @@ public class FinanceController {
         //获取该年每个月的财务支出数组
         double[] expenseList = financeService.getExpenditureByYear(userId,homeSerialNumber, year);
         return ResultUtil.success("获取财务支出列表成功", expenseList);
+    }
+
+    //getFinancialDataByTimeRange
+    @GetMapping("/getFinancialDataByTimeRange")
+    public ResultUtil<Object> getFinancialDataByTimeRange(
+            @RequestParam(value="userId") int userId,
+            @RequestParam(value="startDate") Date startDate,
+            @RequestParam(value="endDate") Date endDate) {
+        //获取用户家庭序列号
+        String homeSerialNumber = accountService.getAccountDetail(userId).getHomeSerialNumber();
+        //获取该年每个月的财务支出数组
+        List<Finance> financeList = financeService.getFinancialDataByTimeRange(userId,homeSerialNumber,
+                startDate, endDate);
+        //将同一天的财务数据合并
+        Map<Date, DailyFinance> dailyFinanceMap = new HashMap<>();
+        for (Finance finance : financeList) {
+            Date date = finance.getCreatedDate();
+            if (dailyFinanceMap.containsKey(date)) {
+                DailyFinance dailyFinance = dailyFinanceMap.get(date);
+                if (finance.getType()==1)
+                    dailyFinance.setIncome(dailyFinance.getIncome() + finance.getAmount());
+                else
+                    dailyFinance.setExpenditure(dailyFinance.getExpenditure() + finance.getAmount());
+            } else {
+                DailyFinance dailyFinance = new DailyFinance();
+                dailyFinance.setDate(date);
+                if (finance.getType()==1)
+                    dailyFinance.setIncome(finance.getAmount());
+                else
+                    dailyFinance.setExpenditure(finance.getAmount());
+                dailyFinanceMap.put(date, dailyFinance);
+            }
+        }
+        List<DailyFinance> dailyFinanceList = new ArrayList<>();
+        for (Date date : dailyFinanceMap.keySet()) {
+            dailyFinanceList.add(dailyFinanceMap.get(date));
+        }
+        return ResultUtil.success("获取财务数据成功", dailyFinanceList);
+    }
+}
+
+class DailyFinance{
+    private Date date;
+    private double income;
+    private double expenditure;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public double getIncome() {
+        return income;
+    }
+
+    public void setIncome(double income) {
+        this.income = income;
+    }
+
+    public double getExpenditure() {
+        return expenditure;
+    }
+
+    public void setExpenditure(double expenditure) {
+        this.expenditure = expenditure;
     }
 }

@@ -111,4 +111,16 @@
         SET home_serial_number = null
         WHERE home_serial_number = #{homeSerialNumber}
     </update>
+    <select id="getFinancialDataByTimeRange" resultType="Finance">
+        SELECT *
+        FROM finance
+        WHERE
+        <if test="homeSerialNumber==null||homeSerialNumber.equals('null')">
+            user_id = #{userId}
+        </if>
+        <if test="homeSerialNumber!=null&amp;&amp;!homeSerialNumber.equals('null')">
+            home_serial_number = #{homeSerialNumber}
+        </if>
+        AND created_date BETWEEN #{startDate} AND #{endDate}
+    </select>
 </mapper>

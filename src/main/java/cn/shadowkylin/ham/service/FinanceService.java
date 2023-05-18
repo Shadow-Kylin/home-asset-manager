@@ -5,6 +5,7 @@ import cn.shadowkylin.ham.model.Finance;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -98,5 +99,10 @@ public class FinanceService {
 
     public void clearHomeFinance(String homeSerialNumber) {
         financeDao.clearHomeFinance(homeSerialNumber);
+    }
+
+    public List<Finance> getFinancialDataByTimeRange(int userId, String homeSerialNumber, Date startDate
+            , Date endDate) {
+        return financeDao.getFinancialDataByTimeRange(userId, homeSerialNumber, startDate, endDate);
     }
 }

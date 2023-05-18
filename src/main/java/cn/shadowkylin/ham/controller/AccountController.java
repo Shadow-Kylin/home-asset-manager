@@ -263,4 +263,16 @@ public class AccountController {
         webSocket.sendMessageToUser(String.valueOf(userId), userJson);
         System.out.println(msg);
     }
+
+    //获取家庭成员数量
+    @GetMapping("/getFamilyMemberNum/{homeSerialNumber}")
+    public ResultUtil<Object> getFamilyMemberNum(@PathVariable("homeSerialNumber") String homeSerialNumber) {
+        //查看home表中是否存在该家庭序列号
+        if (!homeService.isHomeExist(homeSerialNumber)) {
+            return ResultUtil.error("该家庭序列号不存在！");
+        }
+        //调用service层的方法，获取家庭成员列表
+        int familyMemberNum = accountService.getAccountsByHSN(homeSerialNumber).size();
+        return ResultUtil.success("获取家庭成员数成功", familyMemberNum);
+    }
 }

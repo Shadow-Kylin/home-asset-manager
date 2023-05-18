@@ -3,6 +3,7 @@ package cn.shadowkylin.ham.dao;
 import cn.shadowkylin.ham.model.Finance;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -61,4 +62,6 @@ public interface FinanceDao {
     void updateFinancesHSN(int requestId, String homeSerialNumber);
 
     void clearHomeFinance(String homeSerialNumber);
+
+    List<Finance> getFinancialDataByTimeRange(int userId, String homeSerialNumber, Date startDate, Date endDate);
 }
