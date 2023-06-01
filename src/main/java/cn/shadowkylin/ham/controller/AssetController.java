@@ -78,7 +78,7 @@ public class AssetController {
             asset.setUserName(accountService.getAccountDetail(asset.getUserId()).getUsername());
         }
         //使用PageInfo包装查询结果，只需要将pageInfo交给页面就可以
-        PageInfo pageInfo = new PageInfo(assetList);
+        PageInfo<Asset> pageInfo = new PageInfo<>(assetList);
         return ResultUtil.success("获取资产列表成功", pageInfo);
     }
 

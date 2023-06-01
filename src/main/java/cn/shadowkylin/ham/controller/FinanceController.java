@@ -52,7 +52,8 @@ public class FinanceController {
         PageHelper.startPage(pageNum, pageSize);
         System.out.println(searchValue);
         //获取财务列表
-        List<Finance> financeList = financeService.getFinanceList(userId, homeSerialNumber, searchType, searchValue, type);
+        List<Finance> financeList = financeService.getFinanceList(userId, homeSerialNumber, searchType,
+                searchValue, type);
         //根据用户ID获取用户名称
         for (Finance finance : financeList) {
             finance.setUserName(accountService.getAccountDetail(finance.getUserId()).getUsername());

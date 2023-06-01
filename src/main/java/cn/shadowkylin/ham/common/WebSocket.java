@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/websocket/{sid}")
 public class WebSocket {
     private Session session;
-    private static ConcurrentHashMap<String, WebSocket> webSocketConcurrentHashMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, WebSocket> webSocketConcurrentHashMap = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session, @PathParam(value="sid")String sid) {
