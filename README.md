@@ -31,7 +31,7 @@
 
 表格形式
 
-![image-20230706211458356](C:\Users\20861\AppData\Roaming\Typora\typora-user-images\image-20230706211458356.png)
+![](https://img-blog.csdnimg.cn/2c742ed3de49446fbb036532d836392c.png)
 
 卡片形式：
 
