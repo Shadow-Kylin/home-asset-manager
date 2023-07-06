@@ -13,11 +13,11 @@ import java.net.URL;
  * @描述 容联云短信工具类
  */
 public class RLYSmsUtil {
-    private static final String ACCOUNT_SID = "2c9488768658b82f01868d06480b0dd6";
-    private static final String AUTH_TOKEN = "44a05cc131e74d3fad251058159bacda";
-    private static final String BASE_URL = "https://app.cloopen.com:8883";
+    private static final String ACCOUNT_SID = "";
+    private static final String AUTH_TOKEN = "";
+    private static final String BASE_URL = "";
     private static final String TEMPLATE_ID = "1";
-    private static final String APP_ID = "2c9488768658b82f01868d0649460ddd";
+    private static final String APP_ID = "";
 
     /**
      * 发送短信验证码
