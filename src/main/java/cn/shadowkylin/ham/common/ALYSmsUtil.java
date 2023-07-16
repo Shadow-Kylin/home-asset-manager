@@ -24,7 +24,7 @@ public class ALYSmsUtil {
     private static final String ACCESS_KEY_SECRET = System.getenv("ACCESS_KEY_SECRET");
 
     private static final String SIGN_NAME = "家庭资产管家";
-    private static final String TEMPLATE_CODE = "SMS_275015560";
+    private static final String TEMPLATE_CODE = "";
 
     public static String sendSms(String phoneNumber, String code) {
         try {
